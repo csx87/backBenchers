@@ -5,7 +5,7 @@ config = {
     'user': 'root',
     'password': '23072000#Cs',
     'host': 'localhost',
-    'database': 'wpl_practice_hi'
+    'database': 'wpl_practice'
 }
 
 BACKEND_API_KEY = '12345678'

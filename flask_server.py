@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, abort
 import utils
+import tables as tb
 
 app = Flask(__name__)
 
@@ -11,17 +12,17 @@ FRONTEND_API_KEY = utils.FRONTEND_API_KEY
 
 def validateHeaders(API_KEY, is_post = False):
     if 'api-key' not in request.headers:
-        	abort(401, 'Missing API key')
+            abort(401, 'Missing API key')
     
-    	# Verify the API key
+        # Verify the API key
     if request.headers['api-key'] != API_KEY:
         	abort(401, 'Invalid API key')
-
+              
     if(is_post):
         if 'Content-type' not in request.headers:
         	abort(401, 'Missing Content-type')
     
-    	# Verify the API key
+        # Verify the API key
         if request.headers['Content-type'] != "application/json":
         	abort(401, 'Content-type should be application/json')
 
@@ -38,6 +39,25 @@ def ping():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
     
+@app.route('/getTeams',methods=['GET'])
+def getTeams():
+    validateHeaders(FRONTEND_API_KEY)
+    try:
+        ret = tb.getTeams()
+        return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+    
+@app.route('/getMatches',methods=['GET'])
+def getMatches():
+    validateHeaders(FRONTEND_API_KEY)
+    try:
+        ret = tb.getMatches()
+        return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
 
 
 if __name__ == '__main__':
