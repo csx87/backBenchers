@@ -1,9 +1,11 @@
 # MySQL configurations
+import mysql.connector
+
 config = {
     'user': 'root',
     'password': '23072000#Cs',
     'host': 'localhost',
-    'database': 'wpl_practice'
+    'database': 'wpl_practice_hi'
 }
 
 BACKEND_API_KEY = '12345678'
@@ -17,13 +19,12 @@ TEAMS_TABLE_NAME = "teams"
 
 
 
-def executeSqlCommand(command: str, fetchResults=False):
+def execute_sql_command(command: str, fetchResults=False):
     result = 0
     msg = ""
     try:
         # Establish a connection to the database
         with mysql.connector.connect(**config) as conn:
-            print(command)
             # Get cursor
             cursor = conn.cursor()
 
@@ -36,9 +37,8 @@ def executeSqlCommand(command: str, fetchResults=False):
             result = 1
     except mysql.connector.Error as e:
         # Handle any database errors
-        print(f"Error executing SQL command: {e}")
-        msg = str(e)
-        result = 0
+        msg = f"Database Error: {e}"
+        result = -1
     finally:
         # Ensure cursor is closed
         if 'cursor' in locals():
