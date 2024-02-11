@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, abort
 import utils
 import tables as tb
+import user
 
 app = Flask(__name__)
 
@@ -58,6 +59,65 @@ def getMatches():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
+
+@app.route('/getUsers',methods=['GET'])
+def getUsers():
+    validateHeaders(FRONTEND_API_KEY)
+    try:
+        ret = tb.getUsers()
+        return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+    
+@app.route('/getLeaderboard',methods=['GET'])
+def getLeaderboard():
+    validateHeaders(FRONTEND_API_KEY)
+    try:
+        ret = tb.getLeaderboard()
+        return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+    
+@app.route('/getUserInfo',methods=['GET'])
+def getUserInfo():
+    try:
+        validateHeaders(FRONTEND_API_KEY)
+        if 'user-email' not in request.headers:
+            abort(401, 'Missing user-email')
+        if 'password' not in request.headers:
+            abort(401, 'Missing password')
+    
+        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
+    
+        if(ret["result"] == 1):
+          return jsonify(user.getUserInfo(request.headers["user-email"]))
+        else:
+          return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+    
+@app.route('/getUserPredictions',methods=['GET'])
+def getUserPredictions():
+    try:
+        validateHeaders(FRONTEND_API_KEY)
+        if 'user-email' not in request.headers:
+            abort(401, 'Missing user-email')
+        if 'password' not in request.headers:
+            abort(401, 'Missing password')
+    
+        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
+    
+        if(ret["result"] == 1):
+          return jsonify(user.getUserPredictions(request.headers["user-email"]))
+        else:
+          return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+
 
 
 if __name__ == '__main__':
