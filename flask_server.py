@@ -120,10 +120,30 @@ def getUserPredictions():
             abort(401, 'Missing password')
     
         ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
-        
+
     
         if(ret["result"] == 1):
           return jsonify(user.getUserPredictions(request.headers["user-email"]))
+        else:
+          return jsonify(ret)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+    
+@app.route('/updateUserPredictions',methods=['GET'])
+def updateUserPredictions():
+    try:
+        validateHeaders(FRONTEND_API_KEY)
+        if 'user-email' not in request.headers:
+            abort(401, 'Missing user-email')
+        if 'password' not in request.headers:
+            abort(401, 'Missing password')
+    
+        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
+        
+    
+        if(ret["result"] == 1):
+          return jsonify(user.updateUserPredictions(request.headers["user-email"]))
         else:
           return jsonify(ret)
     except Exception as e:

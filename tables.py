@@ -1,6 +1,7 @@
 import utils
 import user
 import json
+import pandas as pd
 
 
 
@@ -90,7 +91,6 @@ def getUserPredictionTable(user_email):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
-
 
 
 

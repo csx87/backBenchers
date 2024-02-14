@@ -87,7 +87,6 @@ def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToC
         # Check if an error occurred while fetching results
             if fetchResults and result == 1 and msg == "":
                 msg = " Some error occurred while fetching results."
-            print({"result": result, "msg": msg})
             return {"result": result, "msg": msg}
 
     # Indicate no results fetched
