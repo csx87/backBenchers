@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, abort
 import utils
 import tables as tb
 import user
+import os
 
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ BACKEND_API_KEY = utils.BACKEND_API_KEY
 FRONTEND_API_KEY = utils.FRONTEND_API_KEY
 
 
-def validateHeaders(API_KEY, is_post = False):
+def validateHeaders(API_KEY, check_json_content = False):
     if 'api-key' not in request.headers:
             abort(401, 'Missing API key')
     
@@ -19,7 +20,7 @@ def validateHeaders(API_KEY, is_post = False):
     if request.headers['api-key'] != API_KEY:
         	abort(401, 'Invalid API key')
               
-    if(is_post):
+    if(check_json_content):
         if 'Content-type' not in request.headers:
         	abort(401, 'Missing Content-type')
     
@@ -150,11 +151,13 @@ def updateUserPredictions():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
 
+
+#------------------------------------------------------------------POST METHODS--------------------------------------------------------------------------#
 @app.route('/addUser',methods=['POST'])
 def addUser():
     try:
         #------------------ Validating Headers and payload -------------------------------------------#
-        validateHeaders(FRONTEND_API_KEY, is_post= True)
+        validateHeaders(FRONTEND_API_KEY, check_json_content= True)
         data = request.json
         ret = None
         if "user_email" not in data.keys():
@@ -209,6 +212,64 @@ def addUser():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 1, "msg": error_msg}), 500
+
+
+@app.route('/addTable',methods=['POST'])
+def addTable():
+    try:
+        excel_file_path = ""
+        constraints_file_filename = ""
+
+        validateHeaders(BACKEND_API_KEY)
+        constraints_file_present = False
+        if 'table-name' not in request.headers:
+            return jsonify({"result": 1, "msg": "table_name not found in headers "}), 500
+        table_name = request.headers["table-name"]
+
+        if 'excel-file' not in request.files:
+            return jsonify({"result": 1, "msg": "No excel or ods file found"}), 500
+        
+        if 'constraints-file' in request.files:
+            constraints_file_present = True
+
+        excel_file = request.files["excel-file"]
+
+        if(constraints_file_present):
+            constraints_file = request.files["constraints-file"]
+
+
+        if(excel_file.filename == ""):
+            return jsonify({"result": 1, "msg": "The excel/ods file provided is not proper"}), 500
+        
+        if excel_file:
+            excel_file_path = f'tables/{table_name}_{excel_file.filename}'
+            excel_file.save(excel_file_path)
+        
+        if(constraints_file_present == True and constraints_file.filename != ""):
+            constraints_file_filename = f'tables/{table_name}_{constraints_file.filename}'
+            constraints_file.save(constraints_file_filename)
+        
+        if(constraints_file_present):
+            ret = utils.excel_to_mysql(table_name,excel_file_path,constraints_file_filename)
+        
+        else:
+            ret = utils.excel_to_mysql(table_name,excel_file_path,None)
+
+        if excel_file:
+            os.remove(excel_file_path)
+
+        if(constraints_file_present and constraints_file):
+            os.remove(constraints_file_filename)
+        
+
+        return ret  
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
+
+
+
 
 
 if __name__ == '__main__':

@@ -19,7 +19,7 @@ config = {
     'database': 'wpl_final_practice'
 }
 
-BACKEND_API_KEY = '12345678'
+BACKEND_API_KEY = '123456789'
 FRONTEND_API_KEY = '12345678'
 
 USERS_TABLE_NAME = "users"
@@ -112,8 +112,9 @@ def checkPassword(user_email,password):
         return {"result": 0, "msg": error_msg}
 
 
-def excel_to_mysql(table_name,excel_file,constraint):
+def excel_to_mysql(table_name,excel_file,constraint_file):
     try:
+        table_name = table_name.lower()
         df = pd.read_excel(excel_file)
 
         create_table_query = f"CREATE TABLE {table_name} ("
@@ -122,18 +123,19 @@ def excel_to_mysql(table_name,excel_file,constraint):
         create_table_query = create_table_query[:-3] + ");"
         print(create_table_query + "\n")
 
-    
-        alter_table_query = f"ALTER TABLE {table_name}\n"
-        with open(constraint, "r") as file:
-            for line in file:
-                alter_table_query = alter_table_query + line.strip() + ",\n"
-        alter_table_query = alter_table_query[:-2] + ";"
-        print(alter_table_query + "\n")
+        if(constraint_file != None):
+            alter_table_query = f"ALTER TABLE {table_name}\n"
+            with open(constraint_file, "r") as file:
+                for line in file:
+                    alter_table_query = alter_table_query + line.strip() + ",\n"
+            alter_table_query = alter_table_query[:-2] + ";"
+            print(alter_table_query + "\n")
         
 
-        ret = execute_sql_command(create_table_query,haveToCommit=True)
+        ret = execute_sql_command(create_table_query.lower(),haveToCommit=True)
         if(ret["result"] == 1):
-            ret = execute_sql_command(alter_table_query,haveToCommit=True)
+            if(constraint_file != None):
+                ret = execute_sql_command(alter_table_query.lower(),haveToCommit=True)
         else:
             return ret
 
@@ -148,7 +150,7 @@ def excel_to_mysql(table_name,excel_file,constraint):
                         insert_query += f"NULL, "
                 insert_query = insert_query[:-2] + "),\n"
             insert_query = insert_query[:-2] + ";"
-            ret = execute_sql_command(insert_query,haveToCommit=True)
+            ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
         else:
             #table created but problem with constraint
             execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
@@ -163,6 +165,7 @@ def excel_to_mysql(table_name,excel_file,constraint):
             ret["msg"] = "table created and constraint added but problem with data   " + ret["msg"]
             return ret
     except Exception as e:
+        execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
 
