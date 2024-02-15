@@ -3,6 +3,8 @@ import mysql.connector
 from flask import jsonify
 import json
 from datetime import datetime
+import pandas as pd
+import math
 
 # response data
 # before jsonify
@@ -108,7 +110,63 @@ def checkPassword(user_email,password):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
+
+
+def excel_to_mysql(table_name,excel_file,constraint):
+    try:
+        df = pd.read_excel(excel_file)
+
+        create_table_query = f"CREATE TABLE {table_name} ("
+        for column in df.columns:
+            create_table_query += f"{column}, \n"
+        create_table_query = create_table_query[:-3] + ");"
+        print(create_table_query + "\n")
+
     
+        alter_table_query = f"ALTER TABLE {table_name}\n"
+        with open(constraint, "r") as file:
+            for line in file:
+                alter_table_query = alter_table_query + line.strip() + ",\n"
+        alter_table_query = alter_table_query[:-2] + ";"
+        print(alter_table_query + "\n")
+        
+
+        ret = execute_sql_command(create_table_query,haveToCommit=True)
+        if(ret["result"] == 1):
+            ret = execute_sql_command(alter_table_query,haveToCommit=True)
+        else:
+            return ret
+
+        if(ret["result"] == 1):
+            insert_query = f"INSERT INTO {table_name} VALUES \n"
+            for row in df.itertuples():
+                insert_query = insert_query + "("
+                for value in row[1:]:
+                    if(type(value) is not float or not math.isnan(value) ):
+                        insert_query += f"'{value}', " 
+                    else:
+                        insert_query += f"NULL, "
+                insert_query = insert_query[:-2] + "),\n"
+            insert_query = insert_query[:-2] + ";"
+            ret = execute_sql_command(insert_query,haveToCommit=True)
+        else:
+            #table created but problem with constraint
+            execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
+            ret["msg"] = "table created but problem with constraint   " + ret["msg"]
+            return ret
+        
+        if(ret["result"] == 1):
+            return execute_sql_command(f"SELECT * FROM {table_name}",fetchResults= True)
+        else:
+            #table created and constraint added but problem with data
+            execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
+            ret["msg"] = "table created and constraint added but problem with data   " + ret["msg"]
+            return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+
+
 
 def check_if_valid_user(email):
     if(email in VALID_USERS):
