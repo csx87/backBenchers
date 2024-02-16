@@ -1,0 +1,35 @@
+CREATE TABLE users(                                                                                                                                                                                                
+user_id INT PRIMARY KEY AUTO_INCREMENT,                                                                                                                                                                            
+user_email VARCHAR(255) NOT NULL UNIQUE,                                                                                                                                                                           
+user_name VARCHAR(255) NOT NULL UNIQUE,                                                                                                                                                                            
+password VARCHAR(255) NOT NULL,                                                                                                                                                                                    
+avatar VARCHAR(255) DEFAULT NULL                                                                                                                                                                                                
+); 
+
+CREATE TABLE teams(
+team_name VARCHAR(10) PRIMARY KEY,
+team_full_name VARCHAR(255) NOT NULL,
+logo VARCHAR(255) DEFAULT NULL 
+);
+
+CREATE TABLE matches(
+match_id INT PRIMARY KEY,
+team_1 VARCHAR(10) NOT NULL,
+FOREIGN KEY (team_1) REFERENCES teams(team_name),
+team_2 VARCHAR(10) NOT NULL,
+FOREIGN KEY (team_2) REFERENCES teams(team_name),
+CONSTRAINT check_different_values CHECK (team_1 != team_2),
+venue VARCHAR(255) NOT NULL,
+start_time DATETIME NOT NULL UNIQUE,
+team_won VARCHAR(10) DEFAULT NULL,
+FOREIGN KEY (team_won) REFERENCES teams(team_name)
+);
+
+CREATE TABLE leaderboard(
+user_id INT,
+FOREIGN KEY (user_id) REFERENCES users(user_id),
+matches_played INT DEFAULT 0,
+matches_won INT DEFAULT 0,
+matches_lost INT DEFAULT 0,
+total_points INT DEFAULT 0
+);

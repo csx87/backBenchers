@@ -145,8 +145,8 @@ def excel_to_mysql(table_name,excel_file):
         if(is_table_empty(table_name)):
             insert_query = f"INSERT INTO {table_name} ("
             for column in df.columns:
-                insert_query += f"{column}, \n"
-            insert_query = insert_query[:-2] + "); VALUES \n"
+                insert_query += f"{column},"
+            insert_query = insert_query[:-2] + ") VALUES \n"
             for row in df.itertuples():
                 insert_query = insert_query + "("
                 for value in row[1:]:
@@ -156,8 +156,7 @@ def excel_to_mysql(table_name,excel_file):
                         insert_query += f"NULL, "
                 insert_query = insert_query[:-2] + "),\n"
             insert_query = insert_query[:-2] + ";"
-            return  insert_query
-            #ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
+            ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
             
             if(ret["result"] == 1):
                 return execute_sql_command(f"SELECT * FROM {table_name}",fetchResults= True)

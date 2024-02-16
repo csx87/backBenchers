@@ -243,7 +243,7 @@ def addTeamsTable():
             return jsonify({"result": 1, "msg": "The excel/ods file provided is not proper"}), 500
         
         if excel_file:
-            excel_file_path = f'tables/{table_name}_{excel_file.filename}'
+            excel_file_path = f'{table_name}_{excel_file.filename}'
             excel_file.save(excel_file_path)
             ret = utils.excel_to_mysql(table_name,excel_file_path)
             return jsonify(ret)
