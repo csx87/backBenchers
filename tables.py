@@ -99,7 +99,7 @@ def setupTables():
             queries = file.read().split(';')[:-1]
             for query in queries:
                 ret = utils.execute_sql_command(query,haveToCommit=True)
-                if(ret != 1):
+                if(ret['result'] != 1):
                     return ret 
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
