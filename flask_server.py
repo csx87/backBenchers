@@ -205,8 +205,11 @@ def addUser():
         if(ret['result'] == 1):
             ret = user.addUserToLeaderboardTable(email)
             if(ret ["result"] != 1):
-                utils.execute_sql_command("DELETE FROM users WHERE user_email=%s",parameter=(email,),haveToCommit=True)
-                return jsonify({"result":-1,"msg":"Couldn't add the user to leaderboard"})
+                uid = user.getUserID(email)
+                if(uid > 0):
+                    ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_id={uid}",haveToCommit=True)
+                    ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_id={uid}",haveToCommit=True)
+                    return jsonify({"result":-1,"msg":"Couldn't Add user to leadrboard deleting the user please try to add him again"})
 
         # Adding the corresponding matches for user in prediction table
         if(ret['result'] == 1):
