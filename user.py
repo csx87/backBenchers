@@ -26,12 +26,12 @@ def addUserToUserTable(user_email,user_name,password,avatar):
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
     
-def addUserToLeaderboardTable(user_email):
+def addUserToLeaderboardTable(user_email,user_name):
     try:
         user_id = getUserID(user_email)
         if(user_id >0):
-            query = "INSERT INTO " + utils.LEADERBOARD_TABLE_NAME + " (user_id) VALUES(%s);"
-            ret = utils.execute_sql_command(query,parameter=(user_id,),haveToCommit= True)
+            query = "INSERT INTO " + utils.LEADERBOARD_TABLE_NAME + " (user_id,user_name) VALUES(%s,%s);"
+            ret = utils.execute_sql_command(query,parameter=(user_id,user_name,),haveToCommit= True)
             return ret
         else:
             return {"result": 0, "msg": "Couldn't Insert to leadreboard"}
