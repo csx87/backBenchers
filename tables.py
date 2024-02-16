@@ -93,7 +93,17 @@ def getUserPredictionTable(user_email):
         return {"result": 0, "msg": error_msg}
 
 
-
+def setup_tables():
+    try:
+        with open("tables_setup.txt", 'r') as file:
+            queries = file.read().split(';')[:-1]
+            for query in queries:
+                ret = utils.execute_sql_command(query,haveToCommit=True)
+                if(ret != 1):
+                    return ret 
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
 
 
 

@@ -118,20 +118,6 @@ def checkPassword(user_email,password):
         return {"result": 0, "msg": error_msg}
 
 
-def setup_tables():
-    try:
-        with open("tables_setup.txt", 'r') as file:
-            queries = file.read().split(';')[:-1]
-            for query in queries:
-                ret = execute_sql_command(query,haveToCommit=True)
-                if(ret != 1):
-                    return ret 
-    except Exception as e:
-        error_msg = f"An unexpected error occurred: {str(e)}"
-        return {"result": 0, "msg": error_msg}
-    
-
-
 def excel_to_mysql(table_name,excel_file,constraint_file):
     try:
         table_name = table_name.lower()
