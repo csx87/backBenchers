@@ -140,17 +140,20 @@ def excel_to_mysql(table_name,excel_file,constraint_file):
             return ret
 
         if(ret["result"] == 1):
+            values_present = False
             insert_query = f"INSERT INTO {table_name} VALUES \n"
             for row in df.itertuples():
                 insert_query = insert_query + "("
                 for value in row[1:]:
+                    values_present = True
                     if(type(value) is not float or not math.isnan(value) ):
                         insert_query += f"'{value}', " 
                     else:
                         insert_query += f"NULL, "
                 insert_query = insert_query[:-2] + "),\n"
             insert_query = insert_query[:-2] + ";"
-            ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
+            if(values_present):
+                ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
         else:
             #table created but problem with constraint
             execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
