@@ -225,9 +225,46 @@ def addUser():
 
 
 @app.route('/populateTeamsTable',methods=['POST'])
-def addTeamsTable():
+def populateTeamsTable():
     try:
         table_name = utils.TEAMS_TABLE_NAME
+        
+
+        validateHeaders(BACKEND_API_KEY)
+
+        if 'excel-file' not in request.files:
+            return jsonify({"result": 1, "msg": "No excel or ods file found"}), 500
+        
+
+        excel_file_path = ""
+        excel_file = request.files["excel-file"]
+
+
+        if(excel_file.filename == ""):
+            return jsonify({"result": 1, "msg": "The excel/ods file provided is not proper"}), 500
+        
+        if excel_file:
+            excel_file_path = f'{table_name}_{excel_file.filename}'
+            excel_file.save(excel_file_path)
+            ret = utils.excel_to_mysql(table_name,excel_file_path)
+            return jsonify(ret)
+            os.remove(excel_file_path)
+
+        else:
+            return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500
+        
+
+        return ret  
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
+    
+
+@app.route('/populateMatchesTable',methods=['POST'])
+def populateMatchesTable():
+    try:
+        table_name = utils.MATCHES_TABLE_NAME
         excel_file_path = ""
 
         validateHeaders(BACKEND_API_KEY)
@@ -258,6 +295,7 @@ def addTeamsTable():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
+
 
 
 
