@@ -57,7 +57,7 @@ def addUserToPredictionTable(user_email,user_name):
                     if(ret["result"] != 1):
                         delUser(user_email,table_name)
                         return {"result":0,"msg":f"Not able to create prediction table. Please contact backend engg {ret['msg']}"}
-                    return ret
+                return ret
             else:
                 delUser(user_email,table_name)
                 return {"result":0,"msg":f"Not able to create prediction table due to matches table. Please contact backend engg {ret['msg']}"}

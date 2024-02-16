@@ -203,7 +203,7 @@ def addUser():
         #----------------------------------------------------------------------------------------#
         
         if(ret['result'] == 1):
-            ret = user.addUserToLeaderboardTable(email)
+            ret = user.addUserToLeaderboardTable(email,name)
             if(ret ["result"] != 1):
                 uid = user.getUserID(email,name)
                 if(uid > 0):
