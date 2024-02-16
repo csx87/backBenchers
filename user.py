@@ -15,7 +15,7 @@ def getUserInfo(user_email):
     return getUserSpecificData(user_email,utils.USERS_TABLE_NAME)
     
 def getUserPredictions(user_email):
-    return tb.getUserPredictionTable(user_email)
+    return getUserSpecificData(user_email,utils.PREDICTION_TABLE_NAME)
 
 def addUserToUserTable(user_email,user_name,password,avatar):
     try:
