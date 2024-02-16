@@ -207,27 +207,18 @@ def addUser():
             if(ret ["result"] != 1):
                 uid = user.getUserID(email,name)
                 if(uid > 0):
-                    ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_id={uid}",haveToCommit=True)
-                    ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_id={uid}",haveToCommit=True)
+                    ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_email=%s",(email,),haveToCommit=True)
+                    ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_id={uid}",(email,),haveToCommit=True)
                     return jsonify({"result":-1,"msg":"Couldn't Add user to leadrboard deleting the user please try to add him again"})
 
         # Adding the corresponding matches for user in prediction table
         if(ret['result'] == 1):
-            ret = tb.createUserPredictionTable(email)
+            ret = user.addUserToPredictionTable(email,name)
             if(ret["result"] != 1):
                 return ret
 
-
-        #if user is added to both user and match table then return or else delete the user
-        if(ret["result"] == 1):
-          return jsonify(user.getUserInfo(email));
-
+        return jsonify(user.getUserInfo(email))
         
-        if(ret!=None):
-          return jsonify(ret)
-        else:
-            error_msg = f"An unexpected error occurred: NULL"
-            return jsonify({"result": 0, "msg": error_msg}), 500
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500

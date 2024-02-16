@@ -30,18 +30,35 @@ def getTop4():
     return getTable(utils.TOP4_TABLE_NAME)
 
     
-def createUserPredictionTable(user_email):
+def addUserToUserPredictionTable(user_email,user_name):
     try:
         uid = user.getUserID(user_email)
         print(uid)
         if(uid != -1):
-            table_name = "user_" + str(uid) + "_predictions"
+            table_name = utils.PREDICTION_TABLE_NAME
+
+            ret = getMatches()
+            if(ret["result"] == 1):
+                matchList = json.loads(ret['msg'])
+                for match in matchList:
+                    match_id = match["match_id"]
+                    query = "INSERT INTO " + table_name + f" (match_id,user_id,user_name) VALUES({match_id},{uid},%s)"
+                    ret = utils.execute_sql_command(query,parameter=(user_name,),haveToCommit=True) 
+                    if(ret["result"] != 1):
+                        user.delUser(user_email,table_name)
+                        return {"result":0,"msg":f"Not able to create prediction table. Please contact backend engg {ret['msg']}"}
+            else:
+                user.delUser(user_email,table_name)
+                return {"result":0,"msg":f"Not able to create prediction table due to matches table. Please contact backend engg {ret['msg']}"}
+
+            '''
             query = "CREATE TABLE " + table_name
             query = query + "(match_id INT NOT NULL, FOREIGN KEY (match_id) REFERENCES matches(match_id),"
-            query = query + "user_prediction VARCHAR(255) DEFAULT NULL,FOREIGN KEY (user_prediction) REFERENCES teams(team_name));"
+            query = query + "user_prediction VARCHAR(255) DEFAULT NULL,FOREIGN KEY (user_prediction) REFERENCES teams(team_name),"
+            query = query + "points INT DEFAULT 0);"
             ret = utils.execute_sql_command(query,haveToCommit=True) #parameter=(table_name,)
             if(ret["result"] != 1):
-                user.delUserAndPredictionTable(user_email,table_name)
+                user.delUser(user_email,table_name)
                 return {"result":0,"msg":f"Not able to create prediction table. Please contact backend engg {ret['msg']}"}
 
             ret = getMatches()
@@ -52,21 +69,22 @@ def createUserPredictionTable(user_email):
                     query = "INSERT INTO " + table_name + f" (match_id) VALUES({match_id})"
                     ret = utils.execute_sql_command(query,haveToCommit=True) 
                     if(ret["result"] != 1):
-                        user.delUserAndPredictionTable(user_email,table_name)
+                        user.delUser(user_email,table_name)
                         return {"result":0,"msg":f"Not able to create prediction table. Please contact backend engg {ret['msg']}"}
             else:
-                user.delUserAndPredictionTable(user_email,table_name)
+                user.delUser(user_email,table_name)
                 return {"result":0,"msg":f"Not able to create prediction table due to matches table. Please contact backend engg {ret['msg']}"}
 
             return ret
+            '''
 
         else:
-            user.delUserAndPredictionTable(user_email,table_name)
+            user.delUser(user_email,table_name)
             error_msg = f"An unexpected error occurred: Didn't get valid uid"
             return {"result": 0, "msg": error_msg}
         
     except Exception as e:
-        user.delUserAndPredictionTable(user_email,table_name)
+        user.delUser(user_email,table_name)
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
     
