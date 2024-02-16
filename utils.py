@@ -118,63 +118,52 @@ def checkPassword(user_email,password):
         return {"result": 0, "msg": error_msg}
 
 
-def excel_to_mysql(table_name,excel_file,constraint_file):
+def is_table_empty(table_name):
+    try: 
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+
+        # Execute query to count entries in the table
+        cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+        count = cursor.fetchone()[0]
+
+        cursor.close()
+        connection.close()
+
+        return count == 0
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return -1
+
+
+def excel_to_mysql(table_name,excel_file):
     try:
         table_name = table_name.lower()
         df = pd.read_excel(excel_file)
 
-        create_table_query = f"CREATE TABLE {table_name} ("
-        for column in df.columns:
-            create_table_query += f"{column}, \n"
-        create_table_query = create_table_query[:-3] + ");"
-        print(create_table_query + "\n")
-
-        if(constraint_file != None):
-            alter_table_query = f"ALTER TABLE {table_name}\n"
-            with open(constraint_file, "r") as file:
-                for line in file:
-                    alter_table_query = alter_table_query + line.strip() + ",\n"
-            alter_table_query = alter_table_query[:-2] + ";"
-            print(alter_table_query + "\n")
-        
-
-        ret = execute_sql_command(create_table_query.lower(),haveToCommit=True)
-        if(ret["result"] == 1):
-            if(constraint_file != None):
-                ret = execute_sql_command(alter_table_query.lower(),haveToCommit=True)
-        else:
-            return ret
-
-        if(ret["result"] == 1):
-            values_present = False
+        table_row_count = is_table_empty(table_name)
+        if(table_row_count == 0):
             insert_query = f"INSERT INTO {table_name} VALUES \n"
             for row in df.itertuples():
                 insert_query = insert_query + "("
                 for value in row[1:]:
-                    values_present = True
                     if(type(value) is not float or not math.isnan(value) ):
                         insert_query += f"'{value}', " 
                     else:
                         insert_query += f"NULL, "
                 insert_query = insert_query[:-2] + "),\n"
             insert_query = insert_query[:-2] + ";"
-            if(values_present):
-                ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
+            ret = execute_sql_command(insert_query.lower(),haveToCommit=True)
+            
+            if(ret["result"] == 1):
+                return execute_sql_command(f"SELECT * FROM {table_name}",fetchResults= True)
+            else:
+                execute_sql_command(f"DELETE FROM {table_name}",haveToCommit= True)
+                ret["msg"] = "table created and constraint added but problem with data   " + ret["msg"]
+                return ret
         else:
-            #table created but problem with constraint
-            execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
-            ret["msg"] = "table created but problem with constraint   " + ret["msg"]
-            return ret
-        
-        if(ret["result"] == 1):
-            return execute_sql_command(f"SELECT * FROM {table_name}",fetchResults= True)
-        else:
-            #table created and constraint added but problem with data
-            execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
-            ret["msg"] = "table created and constraint added but problem with data   " + ret["msg"]
-            return ret
+            return {"result": -1, "msg": "Table already has data please clear that"}
     except Exception as e:
-        execute_sql_command(f"DROP TABLE {table_name}",haveToCommit= True)
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
 

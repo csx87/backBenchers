@@ -224,28 +224,19 @@ def addUser():
         return jsonify({"result": 1, "msg": error_msg}), 500
 
 
-@app.route('/addTable',methods=['POST'])
-def addTable():
+@app.route('/populateTeamsTable',methods=['POST'])
+def addTeamsTable():
     try:
+        table_name = utils.TEAMS_TABLE_NAME
         excel_file_path = ""
-        constraints_file_filename = ""
 
         validateHeaders(BACKEND_API_KEY)
-        constraints_file_present = False
-        if 'table-name' not in request.headers:
-            return jsonify({"result": 1, "msg": "table_name not found in headers "}), 500
-        table_name = request.headers["table-name"]
 
         if 'excel-file' not in request.files:
             return jsonify({"result": 1, "msg": "No excel or ods file found"}), 500
         
-        if 'constraints-file' in request.files:
-            constraints_file_present = True
 
         excel_file = request.files["excel-file"]
-
-        if(constraints_file_present):
-            constraints_file = request.files["constraints-file"]
 
 
         if(excel_file.filename == ""):
@@ -254,22 +245,11 @@ def addTable():
         if excel_file:
             excel_file_path = f'tables/{table_name}_{excel_file.filename}'
             excel_file.save(excel_file_path)
-        
-        if(constraints_file_present == True and constraints_file.filename != ""):
-            constraints_file_filename = f'tables/{table_name}_{constraints_file.filename}'
-            constraints_file.save(constraints_file_filename)
-        
-        if(constraints_file_present):
-            ret = utils.excel_to_mysql(table_name,excel_file_path,constraints_file_filename)
-        
-        else:
-            ret = utils.excel_to_mysql(table_name,excel_file_path,None)
-
-        if excel_file:
+            ret = utils.excel_to_mysql(table_name,excel_file_path)
             os.remove(excel_file_path)
 
-        if(constraints_file_present and constraints_file):
-            os.remove(constraints_file_filename)
+        else:
+            return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500
         
 
         return ret  
