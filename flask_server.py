@@ -203,7 +203,7 @@ def addUser():
         #----------------------------------------------------------------------------------------#
         
         if(ret['result'] == 1):
-            ret = user.addUserToLeaderboardTable(email)
+            ret = user.addUserToLeaderboardTable(email,name)
             if(ret ["result"] == -1):
                     ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_email=%s",(email,),haveToCommit=True)
                     ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_email=%s",(email,),haveToCommit=True)
