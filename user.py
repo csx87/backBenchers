@@ -25,6 +25,19 @@ def addUserToUserTable(user_email,user_name,password,avatar):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
+    
+def addUserToLeaderboardTable(user_email):
+    try:
+        user_id = getUserID(user_email)
+        if(user_id >0):
+            query = "INSERT INTO " + utils.LEADERBOARD_TABLE_NAME + " (user_id) VALUES(%s);"
+            ret = utils.execute_sql_command(query,parameter=(user_id,),haveToCommit= True)
+            return 
+        else:
+            return {"result": 0, "msg": "Couldn't Insert to leadreboard"}
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
 
 def getUserID(user_email):
     try:

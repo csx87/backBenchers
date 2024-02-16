@@ -202,6 +202,10 @@ def addUser():
             return jsonify({"result":0,"msg":"You are not allowed to partcipate. Please check your email or contact backend engg"})
         #----------------------------------------------------------------------------------------#
         
+        ret = user.addUserToLeaderboardTable(email)
+        if(ret ["result "] != 1):
+           return  utils.execute_sql_command("DELETE FROM users WHERE user_email=%s",parameter=(email,),haveToCommit=True)
+
         # Adding the corresponding matches for user in prediction table
         if(ret['result'] == 1):
             ret = tb.createUserPredictionTable(email)
