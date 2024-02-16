@@ -38,7 +38,7 @@ def ping():
         else:
             return jsonify(ret)
     except Exception as e:
-        error_msg = f"An unexpected error occurred: {str(e)}"
+        error_msg = f"An unexpected error occurred : {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
     
 @app.route('/getTeams',methods=['GET'])

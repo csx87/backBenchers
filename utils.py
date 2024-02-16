@@ -57,6 +57,7 @@ def fetch_sql_result_and_convert_to_json(cursor):
 def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToCommit = False):
     result = 0
     msg = ""
+    cursor = None
     try:
         print(command)
         # Establish a connection to the database
@@ -88,7 +89,8 @@ def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToC
         msg = f"Database Error: {e}"
         result = -1
     finally:
-            cursor.close()
+            if(cursor != None):
+                cursor.close()
         
         # Check if an error occurred while fetching results
             if fetchResults and result == 1 and msg == "":
