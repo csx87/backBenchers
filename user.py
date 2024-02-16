@@ -15,7 +15,7 @@ def getUserInfo(user_email):
     return getUserSpecificData(user_email,utils.USERS_TABLE_NAME)
     
 def getUserPredictions(user_email):
-    return  getUserSpecificData(user_email,utils.PREDICTION_TABLE_NAME)
+    return tb.getUserPredictionTable(user_email)
 
 def addUserToUserTable(user_email,user_name,password,avatar):
     try:
@@ -35,6 +35,15 @@ def addUserToLeaderboardTable(user_email,user_name):
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
 
+def getUserID(user_email):
+    try:
+        query = "SELECT user_id FROM " + utils.USERS_TABLE_NAME + " WHERE user_email = %s"
+        ret = utils.execute_sql_command(query,parameter=(user_email,),fetchResults=True)
+        return json.loads(ret['msg'])[0]["user_id"]
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return -1
+
 def addUserToPredictionTable(user_email,user_name):
     try:
             table_name = utils.PREDICTION_TABLE_NAME
@@ -48,7 +57,7 @@ def addUserToPredictionTable(user_email,user_name):
                     if(ret["result"] != 1):
                         delUser(user_email,table_name)
                         return {"result":0,"msg":f"Not able to create prediction table. Please contact backend engg {ret['msg']}"}
-                    return ret
+                return ret
             else:
                 delUser(user_email,table_name)
                 return {"result":0,"msg":f"Not able to create prediction table due to matches table. Please contact backend engg {ret['msg']}"}
@@ -71,6 +80,3 @@ def delUser(user_email):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
-
-    
-

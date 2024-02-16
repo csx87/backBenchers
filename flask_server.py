@@ -203,8 +203,15 @@ def addUser():
         #----------------------------------------------------------------------------------------#
         
         if(ret['result'] == 1):
+<<<<<<< HEAD
             ret = user.addUserToLeaderboardTable(email)
             if(ret ["result"] == -1):
+=======
+            ret = user.addUserToLeaderboardTable(email,name)
+            if(ret ["result"] != 1):
+                uid = user.getUserID(email,name)
+                if(uid > 0):
+>>>>>>> e1b5e9b3a25cfc461f823c9d33adef139699ee11
                     ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_email=%s",(email,),haveToCommit=True)
                     ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_email=%s",(email,),haveToCommit=True)
                     return jsonify({"result":-1,"msg":"Couldn't Add user to leadrboard deleting the user please try to add him again"})
