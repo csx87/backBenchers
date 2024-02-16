@@ -204,7 +204,7 @@ def addUser():
         
         if(ret['result'] == 1):
             ret = user.addUserToLeaderboardTable(email)
-            if(ret ["result"] != 1):
+            if(ret ["result"] == -1):
                     ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_email=%s",(email,),haveToCommit=True)
                     ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_email=%s",(email,),haveToCommit=True)
                     return jsonify({"result":-1,"msg":"Couldn't Add user to leadrboard deleting the user please try to add him again"})
@@ -220,6 +220,9 @@ def addUser():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
+    
+
+
 
 
 @app.route('/populateTeamsTable',methods=['POST'])

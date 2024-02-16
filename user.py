@@ -35,15 +35,6 @@ def addUserToLeaderboardTable(user_email,user_name):
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
 
-def getUserID(user_email):
-    try:
-        query = "SELECT user_id FROM " + utils.USERS_TABLE_NAME + " WHERE user_email = %s"
-        ret = utils.execute_sql_command(query,parameter=(user_email,),fetchResults=True)
-        return json.loads(ret['msg'])[0]["user_id"]
-    except Exception as e:
-        error_msg = f"An unexpected error occurred: {str(e)}"
-        return -1
-
 def addUserToPredictionTable(user_email,user_name):
     try:
             table_name = utils.PREDICTION_TABLE_NAME
