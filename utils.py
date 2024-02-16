@@ -61,24 +61,28 @@ def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToC
         print(command)
         # Establish a connection to the database
         with mysql.connector.connect(**config) as conn:
+            if(conn != None):
             # Get cursor
-            cursor = conn.cursor()
+                cursor = conn.cursor()
 
-            # Execute query
-            if(parameter == None):
-                cursor.execute(command)
+                # Execute query
+                if(parameter == None):
+                    cursor.execute(command)
+                else:
+                    cursor.execute(command,parameter)
+
+                # Fetch results if requested
+                if fetchResults:
+                    #msg = str(fetch_sql_result_and_convert_to_json(cursor))
+                    
+                    msg = fetch_sql_result_and_convert_to_json(cursor)
+                    
+                if(haveToCommit):
+                    conn.commit()
+                result = 1
             else:
-                cursor.execute(command,parameter)
-
-            # Fetch results if requested
-            if fetchResults:
-                #msg = str(fetch_sql_result_and_convert_to_json(cursor))
-                
-                msg = fetch_sql_result_and_convert_to_json(cursor)
-                
-            if(haveToCommit):
-                conn.commit()
-            result = 1
+                msg = f"Database Error: {Not able to connect to database}"
+                result = -1
     except mysql.connector.Error as e:
         # Handle any database errors
         msg = f"Database Error: {e}"
