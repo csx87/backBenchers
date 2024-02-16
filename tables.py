@@ -93,7 +93,7 @@ def getUserPredictionTable(user_email):
         return {"result": 0, "msg": error_msg}
 
 
-def setup_tables():
+def setupTables():
     try:
         with open("tables_setup.txt", 'r') as file:
             queries = file.read().split(';')[:-1]
