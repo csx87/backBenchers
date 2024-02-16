@@ -32,7 +32,7 @@ def addUserToLeaderboardTable(user_email):
         if(user_id >0):
             query = "INSERT INTO " + utils.LEADERBOARD_TABLE_NAME + " (user_id) VALUES(%s);"
             ret = utils.execute_sql_command(query,parameter=(user_id,),haveToCommit= True)
-            return 
+            return ret
         else:
             return {"result": 0, "msg": "Couldn't Insert to leadreboard"}
     except Exception as e:

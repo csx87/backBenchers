@@ -205,7 +205,8 @@ def addUser():
         if(ret['result'] == 1):
             ret = user.addUserToLeaderboardTable(email)
             if(ret ["result"] != 1):
-                return  utils.execute_sql_command("DELETE FROM users WHERE user_email=%s",parameter=(email,),haveToCommit=True)
+                utils.execute_sql_command("DELETE FROM users WHERE user_email=%s",parameter=(email,),haveToCommit=True)
+                return jsonify({"result":-1,"msg":"Couldn't add the user to leaderboard"})
 
         # Adding the corresponding matches for user in prediction table
         if(ret['result'] == 1):
@@ -226,7 +227,7 @@ def addUser():
             return jsonify({"result": 0, "msg": error_msg}), 500
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
-        return jsonify({"result": 1, "msg": error_msg}), 500
+        return jsonify({"result": 0, "msg": error_msg}), 500
 
 
 @app.route('/populateTeamsTable',methods=['POST'])
