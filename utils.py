@@ -81,7 +81,7 @@ def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToC
                     conn.commit()
                 result = 1
             else:
-                msg = f"Database Error: {Not able to connect to database}"
+                msg = "Database Error: Not able to connect to database"
                 result = -1
     except mysql.connector.Error as e:
         # Handle any database errors
