@@ -151,6 +151,16 @@ def updateUserPredictions():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
 
+@app.route('/setupTables',methods=['GET'])
+def setupTables():
+    try:
+       validateHeaders(BACKEND_API_KEY)
+       ret = tb.setupTables()
+       return ret 
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
+
 
 #------------------------------------------------------------------POST METHODS--------------------------------------------------------------------------#
 @app.route('/addUser',methods=['POST'])
