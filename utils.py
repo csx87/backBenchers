@@ -20,7 +20,7 @@ config = {
 }
 
 BACKEND_API_KEY = '123456789'
-FRONTEND_API_KEY = '12345678'
+FRONTEND_API_KEY = "GILLisGOAT@77"
 
 USERS_TABLE_NAME = "users"
 PREDICTION_TABLE_NAME = "predictions"
@@ -29,7 +29,7 @@ MATCHES_TABLE_NAME = "matches"
 TEAMS_TABLE_NAME = "teams"
 TOP4_TABLE_NAME = "top4"
 
-VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","suraj.s@gmail.com","mani@gmail.com"]
+VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com"]
 
 
 PASSWORD_COL_NAME = "password"
