@@ -99,8 +99,9 @@ def setupTables():
             queries = file.read().split(';')[:-1]
             for query in queries:
                 ret = utils.execute_sql_command(query,haveToCommit=True)
-                if(ret['result'] != 1):
-                    return ret 
+                if(ret["result"] != 1):
+                    return ret
+            return {"result":1,"msg":"Tables Created succesfully"}
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}

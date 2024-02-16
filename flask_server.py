@@ -156,7 +156,7 @@ def setupTables():
     try:
        validateHeaders(BACKEND_API_KEY)
        ret = tb.setupTables()
-       return ret 
+       return jsonify(ret) 
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
