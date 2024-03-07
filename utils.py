@@ -29,7 +29,7 @@ MATCHES_TABLE_NAME = "matches"
 TEAMS_TABLE_NAME = "teams"
 TOP4_TABLE_NAME = "top4"
 
-VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com"]
+VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
 
 
 PASSWORD_COL_NAME = "password"
@@ -170,7 +170,12 @@ def excel_to_mysql(table_name,excel_file):
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
 
-
+def check_if_field_persent_in_list_of_dict(lOfDict,fields):
+    for field in fields:
+        for data in lOfDict:
+            if(field not in data.keys()):
+                return False
+    return True
 
 def check_if_valid_user(email):
     if(email in VALID_USERS):

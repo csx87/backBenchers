@@ -130,7 +130,8 @@ def getUserPredictions():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
-    
+
+'''  
 @app.route('/updateUserPredictions',methods=['GET'])
 def updateUserPredictions():
     try:
@@ -150,6 +151,7 @@ def updateUserPredictions():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
+'''
 
 @app.route('/setupTables',methods=['GET'])
 def setupTables():
@@ -298,9 +300,42 @@ def populateMatchesTable():
         return jsonify({"result": 0, "msg": error_msg}), 500
 
 
+@app.route('/updateUserPredictions',methods=['POST'])
+def updateUserPredictions():
+    try:
+        validateHeaders(FRONTEND_API_KEY)
+
+        if 'user-email' not in request.headers:
+            abort(401, 'Missing user-email')
+        if 'password' not in request.headers:
+            abort(401, 'Missing password')
+
+        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
+        if(ret["result"] != 1):
+          return jsonify(ret)
+
+        #data is list of dict
+        data = request.json
+        cont = utils.check_if_field_persent_in_list_of_dict(data,["match_id","user_prediction"])
+        if(not cont):
+            error_msg = """An unexpected error occurred: The json body is not of the proper format [{"match_id":"1","user_prediction":"RCB"},{"match_id":"2","user_prediction":"MI"},.....]"""
+            return jsonify({"result": 0, "msg": error_msg}), 500
+
+        ret = user.updateUserPredictions(request.headers["user-email"],data)
+
+        if(ret["result"] == 1):
+            ret = user.getUserPredictions(request.headers["user-email"])
+
+        return jsonify(ret)
+        
+        
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
 
 
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port = 8001)

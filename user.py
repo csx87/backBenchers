@@ -63,11 +63,26 @@ def delUser(user_email):
     try:
         ret = None
         query = f"DELETE FROM {utils.LEADERBOARD_TABLE_NAME} WHERE user_email=%s"
-        ret = utils.execute_sql_command(query,(user_email,),haveToCommit= True)
+        ret = utils.execute_sql_command(query,parameter(user_email,),haveToCommit= True)
         query = f"DELETE FROM {utils.PREDICTION_TABLE_NAME} WHERE user_email=%s"
         ret = utils.execute_sql_command(query,(user_email,),haveToCommit= True)
         query = f"DELETE FROM {utils.USERS_TABLE_NAME} WHERE user_email=%s"
         ret = utils.execute_sql_command(query,(user_email,),haveToCommit= True)
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+
+
+def updateUserPredictions(user_email,predictionsList):
+    try:
+        print(predictionsList)
+        for prediction in predictionsList:
+            print(type(prediction["user_prediction"]))
+
+            query = f"UPDATE predictions SET user_prediction = %s WHERE user_email=%s AND match_id=%s"
+            print(query)
+            ret = utils.execute_sql_command(query,parameter = (prediction["user_prediction"],user_email,prediction["match_id"],),haveToCommit= True)
         return ret
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
