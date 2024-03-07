@@ -324,7 +324,7 @@ def updateUserPredictions():
         ret = user.updateUserPredictions(request.headers["user-email"],data)
 
         if(ret["result"] == 1):
-            ret = user.getUserPredictions(request.headers["user-email"])
+            ret = user.getFullUserPredictions(request.headers["user-email"])
 
         return jsonify(ret)
         

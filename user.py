@@ -17,6 +17,19 @@ def getUserInfo(user_email):
 def getUserPredictions(user_email):
     return getUserSpecificData(user_email,utils.PREDICTION_TABLE_NAME)
 
+def getFullUserPredictions(user_email):
+    try:
+        query = f"SELECT {utils.MATCHES_TABLE_NAME}.*  ,{utils.PREDICTION_TABLE_NAME}.user_prediction  FROM {utils.PREDICTION_TABLE_NAME}"
+        query = query + f"INNER JOIN {utils.MATCHES_TABLE_NAME}" 
+        query = query + f"ON {utils.MATCHES_TABLE_NAME}.match_id = {utils.PREDICTION_TABLE_NAME}.match_id" 
+        query = query + "WHERE user_email =%s " 
+        ret = utils.execute_sql_command(query,fetchResults=True,parameter=(user_email,))
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+    
+
 def addUserToUserTable(user_email,user_name,password,avatar):
     try:
         query = "INSERT INTO " + utils.USERS_TABLE_NAME + " (user_email,user_name,password,avatar) VALUES(%s,%s,%s,%s);"
