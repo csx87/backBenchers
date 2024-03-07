@@ -20,9 +20,9 @@ def getUserPredictions(user_email):
 def getFullUserPredictions(user_email):
     try:
         query = f"SELECT {utils.MATCHES_TABLE_NAME}.*  ,{utils.PREDICTION_TABLE_NAME}.user_prediction  FROM {utils.PREDICTION_TABLE_NAME}"
-        query = query + f"INNER JOIN {utils.MATCHES_TABLE_NAME}" 
-        query = query + f"ON {utils.MATCHES_TABLE_NAME}.match_id = {utils.PREDICTION_TABLE_NAME}.match_id" 
-        query = query + "WHERE user_email =%s " 
+        query = query + f"\nINNER JOIN {utils.MATCHES_TABLE_NAME}" 
+        query = query + f"\nON {utils.MATCHES_TABLE_NAME}.match_id = {utils.PREDICTION_TABLE_NAME}.match_id" 
+        query = query + "\nWHERE user_email =%s " 
         ret = utils.execute_sql_command(query,fetchResults=True,parameter=(user_email,))
         return ret
     except Exception as e:
