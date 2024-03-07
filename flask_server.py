@@ -124,7 +124,7 @@ def getUserPredictions():
 
     
         if(ret["result"] == 1):
-          return jsonify(user.getUserPredictions(request.headers["user-email"]))
+          return jsonify(user.getFullUserPredictions(request.headers["user-email"]))
         else:
           return jsonify(ret)
     except Exception as e:
