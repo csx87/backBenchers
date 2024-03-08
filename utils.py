@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 import pandas as pd
 import math
+import decimal
 
 # response data
 # before jsonify
@@ -29,29 +30,44 @@ MATCHES_TABLE_NAME = "matches"
 TEAMS_TABLE_NAME = "teams"
 TOP4_TABLE_NAME = "top4"
 
+MATCHES_ID_COL_NAME = "match_id"
+MATCHES_WON_POINT = 2
+MATCHES_LOST_POINT = 0
+MATCHES_NOT_PREDICTED_POINT = -1
+
 VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
 
 
 PASSWORD_COL_NAME = "password"
 
 def fetch_sql_result_and_convert_to_json(cursor):
+    try: 
 
-    results_json = []
-    data = cursor.fetchall()
-    print("Chaman", data)
-    for row in data:
-        print("Chaman", row)
-        result_dict = {}
-        for i, column in enumerate(cursor.description):
-           
-            if isinstance(row[i], datetime):
-                # Convert datetime object to string
-                result_dict[column[0]] = row[i].strftime('%Y-%m-%d %H:%M:%S')
-            else:
-                print("Chaman i " , row[i])
-                result_dict[column[0]] = row[i]
-        results_json.append(result_dict)
-    return json.dumps(results_json)
+        results_json = []
+        data = cursor.fetchall()
+        print("Chaman", data)
+        for row in data:
+            print("Chaman", row)
+            result_dict = {}
+            for i, column in enumerate(cursor.description):
+            
+                if isinstance(row[i], datetime):
+                    # Convert datetime object to string
+                    result_dict[column[0]] = row[i].strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    print("Chaman i " , row[i])
+                    if(isinstance(row[i], decimal.Decimal)):
+                        result_dict[column[0]] = int(row[i])
+                    else:
+                        result_dict[column[0]] = row[i]
+            results_json.append(result_dict)
+        print("Here" + json.dumps(results_json))
+        return json.dumps(results_json)
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+    
 
 
 def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToCommit = False):

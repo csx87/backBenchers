@@ -21,7 +21,27 @@ def getMatches():
     return getTable(utils.MATCHES_TABLE_NAME)
     
 def getLeaderboard():
-    return getTable(utils.LEADERBOARD_TABLE_NAME)
+    try:
+        matches_won = "SUM(CASE WHEN (matches.team_won = predictions.user_prediction AND matches.team_won IS NOT NULL) THEN 1 ELSE 0 END)"
+        matches_lost = "SUM(CASE WHEN (matches.team_won != predictions.user_prediction AND matches.team_won IS NOT NULL) THEN 1 ELSE 0 END)"
+        matches_not_predicted = "SUM(CASE WHEN (matches.team_won IS NOT NULL AND predictions.user_prediction is NULL) THEN 1 ELSE 0 END)"
+
+        points = f"{matches_won}*{utils.MATCHES_WON_POINT} + {matches_lost}*{utils.MATCHES_LOST_POINT} + {matches_not_predicted}*{utils.MATCHES_NOT_PREDICTED_POINT}"
+
+        table = f"FROM {utils.PREDICTION_TABLE_NAME}\n"
+        table = table + f"INNER JOIN {utils.MATCHES_TABLE_NAME}\n"
+        table = table + f"ON {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} = {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}\n"
+
+        cond = "WHERE start_time < DATE_ADD(DATE_ADD(NOW(), INTERVAL 5 HOUR), INTERVAL 30 MINUTE)\n"
+        cond = cond + "GROUP BY user_name ORDER BY points DESC;"
+
+        query = f"SELECT user_name, {matches_won} as matches_won, {matches_lost} as matches_lost, {matches_not_predicted} as matches_not_predicted, {points} as points\n"
+        query = query + table + cond
+
+        return utils.execute_sql_command(query,fetchResults=True)
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
     
 def getUsers():
     return getTable(utils.USERS_TABLE_NAME)

@@ -79,7 +79,7 @@ def getLeaderboard():
         return jsonify(ret)
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
-        return jsonify({"result": 0, "msg": error_msg})
+        return jsonify({"result": -1, "msg": error_msg})
 
 @app.route('/getTop4',methods=['GET'])
 def getTop4():
