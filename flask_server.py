@@ -334,6 +334,29 @@ def updateUserPredictions():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
 
+@app.route('/updateTeamWon',methods=['POST'])
+def updateTeamWon() :
+    try: 
+        validateHeaders(BACKEND_API_KEY,check_json_content = True)
+        data = request.json
+
+        print(type(data),data)
+
+        if("match_id" not in data.keys() or "team_won" not in data.keys()):
+            return jsonify({"result": 0, "msg": "Either match_id or team_won fields not present"}), 400
+
+        match_id = data["match_id"]
+        team_won = data["team_won"]
+        if( match_id<1 or len(team_won) < 1):
+            return jsonify({"result": 0, "msg": "Value for either of the field is missing or imporper"}), 400
+
+        query = f"UPDATE {utils.MATCHES_TABLE_NAME} SET team_won = %s WHERE match_id = {match_id}"
+        return jsonify(utils.execute_sql_command(query,parameter=(team_won,),haveToCommit=True))
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
+
 
 
 
