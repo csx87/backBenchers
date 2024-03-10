@@ -19,6 +19,13 @@ def getTeams():
 
 def getMatches():
     return getTable(utils.MATCHES_TABLE_NAME)
+
+
+def getUsers():
+    return getTable(utils.USERS_TABLE_NAME)
+
+def getTop4():
+    return getTable(utils.TOP4_TABLE_NAME)
     
 def getLeaderboard():
     try:
@@ -43,11 +50,7 @@ def getLeaderboard():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
     
-def getUsers():
-    return getTable(utils.USERS_TABLE_NAME)
 
-def getTop4():
-    return getTable(utils.TOP4_TABLE_NAME)
 
     
 def setupTables():

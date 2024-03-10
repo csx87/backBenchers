@@ -100,3 +100,23 @@ def updateUserPredictions(user_email,predictionsList):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
+
+
+def getUserFirstTop4(user_email):
+    try: 
+        query = "SELECT col1,col2,col3,col4 from " + utils.TOP4_TABLE_NAME + " WHERE user_email = %s"
+        ret = utils.execute_sql_command(query,parameter=(user_email,),fetchResults=True);
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+
+
+def getUserSecondTop4(user_email):
+    try: 
+        query = "SELECT col5,col6,col7,col8 from " + utils.TOP4_TABLE_NAME + " WHERE user_email = %s"
+        ret = utils.execute_sql_command(query,parameter=(user_email,),fetchResults=True);
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
