@@ -91,46 +91,6 @@ def getTop4():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})    
 
-@app.route('/getUserFirstTop4',methods=['GET'])
-def getUserFirstTop4():
-    validateHeaders(FRONTEND_API_KEY)
-    try:
-        if 'user-email' not in request.headers:
-            abort(401, 'Missing user-email')
-        if 'password' not in request.headers:
-            abort(401, 'Missing password')
-    
-        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
-
-        if(ret["result"] == 1):
-          return jsonify(user.getUserFirstTop4(request.headers["user-email"]))
-        else:
-          return jsonify(ret)
-
-    except Exception as e:
-        error_msg = f"An unexpected error occurred: {str(e)}"
-        return jsonify({"result": 0, "msg": error_msg})
-
-@app.route('/getUserSecondTop4',methods=['GET'])
-def getUserSecondTop4():
-    validateHeaders(FRONTEND_API_KEY)
-    try:
-        if 'user-email' not in request.headers:
-            abort(401, 'Missing user-email')
-        if 'password' not in request.headers:
-            abort(401, 'Missing password')
-    
-        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
-
-        if(ret["result"] == 1):
-          return jsonify(user.getUserSecondTop4(request.headers["user-email"]))
-        else:
-          return jsonify(ret)
-
-    except Exception as e:
-        error_msg = f"An unexpected error occurred: {str(e)}"
-        return jsonify({"result": 0, "msg": error_msg})     
-
     
 @app.route('/getUserInfo',methods=['GET'])
 def getUserInfo():
@@ -401,4 +361,4 @@ def updateTeamWon() :
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port = 8000)
+    app.run(debug=True,port = 8001)
