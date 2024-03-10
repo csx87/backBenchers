@@ -35,6 +35,11 @@ MATCHES_WON_POINT = 2
 MATCHES_LOST_POINT = 0
 MATCHES_NOT_PREDICTED_POINT = -1
 
+TEAMS_PRESENT_IN_FIRST_TOP4_PRED = 2
+TEAMS_CORRECT_POSITON_PRED_FIRST_TOP4 = 2
+TEAMS_PRESENT_IN_SECOND_TOP4_PRED = 2
+TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4 = 2
+
 VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
 
 

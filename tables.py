@@ -86,3 +86,11 @@ def check_if_user_name_exists(name):
         return False
 
 
+def getUsersList():
+    
+    user_list = []
+    ret = getUsers()
+    if( ret["result"] == 1):
+        for users_dict in json.loads(ret["msg"]):
+            user_list.append(users_dict["user_email"])
+    return user_list

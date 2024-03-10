@@ -120,3 +120,36 @@ def getUserSecondTop4(user_email):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
+
+
+def updateUserTop4Poins(user_email, real_top4: list):
+    try: 
+        points = 0
+        ret = getUserFirstTop4(user_email)
+        if(ret["result"] == 1):
+            first_top4_list = list(json.loads(ret["msg"])[0].values())
+            ret = getUserSecondTop4(user_email)
+            if(ret["result"] == 1):
+                second_top4_list = list(json.loads(ret["msg"])[0].values())
+            else: 
+                return ret 
+        else:
+            return ret 
+
+        for team in real_top4:
+            if(team in first_top4_list):
+                points = points + utils.TEAMS_PRESENT_IN_FIRST_TOP4_PRED
+                if(real_top4.index(team) == first_top4_list.index(team)):
+                    points = points + utils.TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4
+
+            if(team in second_top4_list):
+                points = points + utils.TEAMS_PRESENT_IN_SECOND_TOP4_PRED
+                if(real_top4.index(team) == second_top4_list.index(team)):
+                    points = points + utils.TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4
+
+        query = f"UPDATE {utils.TOP4_TABLE_NAME} SET points = {points} WHERE user_email=%s"
+        return utils.execute_sql_command(query,parameter=(user_email,),haveToCommit=True) 
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}

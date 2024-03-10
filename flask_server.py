@@ -398,7 +398,31 @@ def updateTeamWon() :
         return jsonify({"result": 0, "msg": error_msg}), 500
 
 
+@app.route('/updateTop4',methods=['POST'])
+def updateTop4():
+    try: 
+        validateHeaders(BACKEND_API_KEY,check_json_content = True)
+        data = request.json
+
+        print(type(data),data)
+
+        if("team1" not in data.keys() or "team2" not in data.keys() or"team3" not in data.keys() or"team4" not in data.keys()):
+            return jsonify({"result": 0, "msg": "Either team1,team2,team3,team4 fields not present"}), 400
+
+        top4_result = list(data.values())
+
+        user_list = tb.getUsersList()
+
+        # user -> user_email
+        for user_email in user_list:
+            ret = user.updateUserTop4Poins(user_email,top4_result)
+            if(ret["result"] == )
+            
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
+
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port = 8000)
+    app.run(debug=True,port = 8001)
