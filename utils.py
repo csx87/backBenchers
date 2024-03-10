@@ -40,7 +40,7 @@ TEAMS_CORRECT_POSITON_PRED_FIRST_TOP4 = 2
 TEAMS_PRESENT_IN_SECOND_TOP4_PRED = 2
 TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4 = 2
 
-VALID_USERS = ["chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
+VALID_USERS = ["test_user","chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
 
 
 PASSWORD_COL_NAME = "password"
@@ -50,9 +50,7 @@ def fetch_sql_result_and_convert_to_json(cursor):
 
         results_json = []
         data = cursor.fetchall()
-        print("Chaman", data)
         for row in data:
-            print("Chaman", row)
             result_dict = {}
             for i, column in enumerate(cursor.description):
             
@@ -60,7 +58,6 @@ def fetch_sql_result_and_convert_to_json(cursor):
                     # Convert datetime object to string
                     result_dict[column[0]] = row[i].strftime('%Y-%m-%d %H:%M:%S')
                 else:
-                    print("Chaman i " , row[i])
                     if(isinstance(row[i], decimal.Decimal)):
                         result_dict[column[0]] = int(row[i])
                     else:

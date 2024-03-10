@@ -49,6 +49,14 @@ def getUsers():
 def getTop4():
     return getTable(utils.TOP4_TABLE_NAME)
 
+def getTop4Points():
+    try: 
+        query = "SELECT user_name, points from " + utils.TOP4_TABLE_NAME
+        ret = utils.execute_sql_command(query,fetchResults=True);
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
     
 def setupTables():
     try:

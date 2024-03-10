@@ -245,10 +245,9 @@ def addUser():
         #----------------------------------------------------------------------------------------#
         
         if(ret['result'] == 1):
-            ret = user.addUserToLeaderboardTable(email,name)
+            ret = user.addUserToTop4Table(email,name)
             if(ret ["result"] == -1):
-                    ret = utils.execute_sql_command(f"DELETE FROM leaderboard WHERE user_email=%s",(email,),haveToCommit=True)
-                    ret = utils.execute_sql_command(f"DELETE FROM users WHERE user_email=%s",(email,),haveToCommit=True)
+                    ret = user.delUser(email)
                     return jsonify({"result":-1,"msg":"Couldn't Add user to leadrboard deleting the user please try to add him again"})
 
         # Adding the corresponding matches for user in prediction table
@@ -260,6 +259,7 @@ def addUser():
         return jsonify(user.getUserInfo(email))
         
     except Exception as e:
+        ret = user.delUser(email)
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
     
@@ -416,12 +416,26 @@ def updateTop4():
         # user -> user_email
         for user_email in user_list:
             ret = user.updateUserTop4Poins(user_email,top4_result)
-            if(ret["result"] == )
+    
+        return tb.getTop4Points()
             
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
 
+@app.route('/delUser',methods=['POST'])
+def delUser():
+    try:
+        validateHeaders(FRONTEND_API_KEY)
+
+        user_email = request.headers["user-email"]
+
+        if(user_email in utils.VALID_USERS):
+            return jsonify(user.delUser(user_email))
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500
 
 
 if __name__ == '__main__':
