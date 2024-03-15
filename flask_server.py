@@ -398,6 +398,64 @@ def updateTeamWon() :
         return jsonify({"result": 0, "msg": error_msg}), 500
 
 
+@app.route('/updateUserFirstTop4Pred',methods=['POST'])
+def updateUserFirstTop4Pred():
+    try: 
+        validateHeaders(FRONTEND_API_KEY,check_json_content = True)
+        data = request.json
+
+        if 'user-email' not in request.headers:
+                abort(401, 'Missing user-email')
+        if 'password' not in request.headers:
+                abort(401, 'Missing password')
+
+        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
+        if(ret["result"] != 1):
+            return jsonify(ret)
+
+        if("team1" not in data.keys() or "team2" not in data.keys() or"team3" not in data.keys() or"team4" not in data.keys()):
+                return jsonify({"result": 0, "msg": "Either team1,team2,team3,team4 fields not present"}), 400
+
+        top4_predicted = list(data.values())
+
+        ret = user.updateUserTop4Pred(request.headers["user-email"],top4_predicted,firstPred=True)
+
+        return jsonify(ret)
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500   
+
+
+@app.route('/updateUserSecondTop4Pred',methods=['POST'])
+def updateUserSecondTop4Pred():
+    try: 
+        validateHeaders(FRONTEND_API_KEY,check_json_content = True)
+        data = request.json
+
+        if 'user-email' not in request.headers:
+                abort(401, 'Missing user-email')
+        if 'password' not in request.headers:
+                abort(401, 'Missing password')
+
+        ret = utils.checkPassword(request.headers["user-email"],request.headers["password"])
+        if(ret["result"] != 1):
+            return jsonify(ret)
+
+        if("team1" not in data.keys() or "team2" not in data.keys() or"team3" not in data.keys() or"team4" not in data.keys()):
+                return jsonify({"result": 0, "msg": "Either team1,team2,team3,team4 fields not present"}), 400
+
+        top4_predicted = list(data.values())
+
+        ret = user.updateUserTop4Pred(request.headers["user-email"],top4_predicted,firstPred=False)
+
+        return jsonify(ret)
+
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg}), 500   
+
+
 @app.route('/updateTop4',methods=['POST'])
 def updateTop4():
     try: 

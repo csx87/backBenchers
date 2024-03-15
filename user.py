@@ -153,3 +153,17 @@ def updateUserTop4Poins(user_email, real_top4: list):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
+
+
+def updateUserTop4Pred(user_email,top4_prediciton_list,firstPred):
+    try:
+        first,second,third,fourth = top4_prediciton_list
+        if(firstPred):
+            query = f"UPDATE {utils.TOP4_TABLE_NAME} SET col1 = %s ,col2 = %s ,col3 = %s , col4 = %s WHERE user_email = %s"
+        else:
+            query = f"UPDATE {utils.TOP4_TABLE_NAME} SET col5 = %s , col6 = %s ,col7 = %s , col8 = %s WHERE user_email = %s"  
+        ret = utils.execute_sql_command(query,parameter=(first,second,third,fourth,user_email),haveToCommit=True) 
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
