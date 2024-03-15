@@ -33,10 +33,18 @@ def getLeaderboard():
         table = table + f"ON {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} = {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}\n"
 
         cond = "WHERE start_time < DATE_ADD(DATE_ADD(NOW(), INTERVAL 5 HOUR), INTERVAL 30 MINUTE)\n"
-        cond = cond + "GROUP BY user_name ORDER BY points DESC;"
+        cond = cond + "GROUP BY user_name ) as leaderboard_without_top4"
 
-        query = f"SELECT user_name, {matches_won} as matches_won, {matches_lost} as matches_lost, {matches_not_predicted} as matches_not_predicted, {points} as points\n"
-        query = query + table + cond
+        leaderboard_without_top4_table  = f"(SELECT user_name, {matches_won} as matches_won, {matches_lost} as matches_lost, {matches_not_predicted} as matches_not_predicted, {points} as pred_points\n"
+        leaderboard_without_top4_table  = leaderboard_without_top4_table + table + cond
+
+        leaderboard_col = f"SELECT leaderboard_without_top4.*, top4.points as top4_points, leaderboard_without_top4.pred_points + top4.points as total_points FROM {leaderboard_without_top4_table} \n"
+        leaderboard_join = "INNER JOIN top4 ON top4.user_name  = leaderboard_without_top4.user_name \n"
+        leaderboard_order = "ORDER BY total_points DESC, top4_points DESC ,pred_points DESC, "
+        leaderboard_order = leaderboard_order + "matches_won DESC, matches_lost ASC, matches_not_predicted ASC, user_name ASC"
+
+        query = leaderboard_col + leaderboard_join + leaderboard_order
+
 
         return utils.execute_sql_command(query,fetchResults=True)
     except Exception as e:
