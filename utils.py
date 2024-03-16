@@ -130,13 +130,16 @@ def checkPassword(user_email,password):
         else:
             #Format of msg affects
             #print(ret['msg'],type(ret['msg']),type(json.loads(ret['msg'])[0]))
+            if(len(json.loads(ret['msg'])) == 0):
+                 return {"result": -1, "msg": "User_Not_Found"}
+                 
             if(password == json.loads(ret['msg'])[0]["password"]):
                 return {"result": 1, "msg": ""}
             else:
                 return {"result": -2, "msg": "Password doesn't match"}
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
-        return {"result": 0, "msg": error_msg}
+        return {"result": 0, "msg": json.loads(ret['msg'])}
 
 
 def is_table_empty(table_name):
