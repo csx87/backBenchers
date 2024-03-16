@@ -23,7 +23,7 @@ def getFullUserPredictions(user_email):
         query = query + f"\nINNER JOIN {utils.MATCHES_TABLE_NAME}" 
         query = query + f"\nON {utils.MATCHES_TABLE_NAME}.match_id = {utils.PREDICTION_TABLE_NAME}.match_id" 
         query = query + "\nWHERE user_email =%s " 
-        ret = utils.execute_sql_command(query,fetchResults=True,parameter=(user_email,))
+        ret = utils.execute_sql_command(query,fetchResults=True,parameter=(user_email,),upperCase = True)
         return ret
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"

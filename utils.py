@@ -45,7 +45,7 @@ VALID_USERS = ["test_user","chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","
 
 PASSWORD_COL_NAME = "password"
 
-def fetch_sql_result_and_convert_to_json(cursor):
+def fetch_sql_result_and_convert_to_json(cursor, upperCase= False):
     try: 
 
         results_json = []
@@ -61,7 +61,7 @@ def fetch_sql_result_and_convert_to_json(cursor):
                     if(isinstance(row[i], decimal.Decimal)):
                         result_dict[column[0]] = int(row[i])
                     else:
-                        if(isinstance(row[i], str)):
+                        if(upperCase and isinstance(row[i], str)):
                             result_dict[column[0]] = row[i].upper()
                         else: 
                             result_dict[column[0]] = row[i]
@@ -75,7 +75,7 @@ def fetch_sql_result_and_convert_to_json(cursor):
     
 
 
-def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToCommit = False):
+def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToCommit = False,upperCase= False):
     result = 0
     msg = ""
     cursor = None
@@ -97,7 +97,7 @@ def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToC
                 if fetchResults:
                     #msg = str(fetch_sql_result_and_convert_to_json(cursor))
                     
-                    msg = fetch_sql_result_and_convert_to_json(cursor)
+                    msg = fetch_sql_result_and_convert_to_json(cursor,upperCase)
                     
                 if(haveToCommit):
                     conn.commit()
