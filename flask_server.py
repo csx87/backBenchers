@@ -298,10 +298,10 @@ def populateTeamsTable():
         
         if excel_file:
             excel_file_path = f'{table_name}_{excel_file.filename}'
-            excel_file.save(excel_file_path)
-            ret = utils.excel_to_mysql(table_name,excel_file_path)
+            #excel_file.save(excel_file_path)
+            ret = utils.excel_to_mysql(table_name,"/home/ubuntu/backBenchers/teams_teams.ods")
             return jsonify(ret)
-            os.remove(excel_file_path)
+            #os.remove(excel_file_path)
 
         else:
             return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500

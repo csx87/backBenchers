@@ -17,7 +17,7 @@ config = {
     'user': 'root',
     'password': 'GILLisGOAT@77',
     'host': 'localhost',
-    'database': 'wpl_practice_beta'
+    'database': 'ipl_practice_beta'
 }
 
 BACKEND_API_KEY = '123456789'
@@ -132,7 +132,7 @@ def checkPassword(user_email,password):
             #print(ret['msg'],type(ret['msg']),type(json.loads(ret['msg'])[0]))
             if(len(json.loads(ret['msg'])) == 0):
                  return {"result": -1, "msg": "User_Not_Found"}
-                 
+
             if(password == json.loads(ret['msg'])[0]["password"]):
                 return {"result": 1, "msg": ""}
             else:
@@ -170,7 +170,7 @@ def excel_to_mysql(table_name,excel_file):
             insert_query = f"INSERT INTO {table_name} ("
             for column in df.columns:
                 insert_query += f"{column},"
-            insert_query = insert_query[:-2] + ") VALUES \n"
+            insert_query = insert_query[:-1] + ") VALUES \n"
             for row in df.itertuples():
                 insert_query = insert_query + "("
                 for value in row[1:]:

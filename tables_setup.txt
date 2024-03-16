@@ -1,6 +1,5 @@
-CREATE TABLE users(                                                                                                                                                                                                
-user_id INT PRIMARY KEY AUTO_INCREMENT,                                                                                                                                                                            
-user_email VARCHAR(255) NOT NULL UNIQUE,                                                                                                                                                                           
+CREATE TABLE users(                                                                                                                                                                                                                                                                                                                                                                           
+user_email VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,                                                                                                                                                                           
 user_name VARCHAR(255) NOT NULL UNIQUE,                                                                                                                                                                            
 password VARCHAR(255) NOT NULL,                                                                                                                                                                                    
 avatar VARCHAR(255) DEFAULT NULL                                                                                                                                                                                                
@@ -24,11 +23,37 @@ team_won VARCHAR(10) DEFAULT NULL,
 FOREIGN KEY (team_won) REFERENCES teams(team_name)
 );
 
-CREATE TABLE leaderboard(
-user_id INT,
-FOREIGN KEY (user_id) REFERENCES users(user_id),
-matches_played INT DEFAULT 0,
-matches_won INT DEFAULT 0,
-matches_lost INT DEFAULT 0,
-total_points INT DEFAULT 0
+CREATE TABLE predictions (
+match_id INT,
+FOREIGN KEY (match_id) REFERENCES matches(match_id),
+user_email VARCHAR(255),
+FOREIGN KEY (user_email) REFERENCES users(user_email),
+user_name VARCHAR(255),
+user_prediction VARCHAR(10) DEFAULT NULL,
+FOREIGN KEY (user_prediction) REFERENCES teams(team_name)
+);
+
+CREATE TABLE top4 (
+user_email VARCHAR(255) UNIQUE,
+user_name VARCHAR(255) UNIQUE,
+col1 VARCHAR(10) DEFAULT NULL,
+col2 VARCHAR(10) DEFAULT NULL,
+col3 VARCHAR(10) DEFAULT NULL,
+col4 VARCHAR(10) DEFAULT NULL,
+col5 VARCHAR(10) DEFAULT NULL,
+col6 VARCHAR(10) DEFAULT NULL,
+col7 VARCHAR(10) DEFAULT NULL,
+col8 VARCHAR(10) DEFAULT NULL,
+points INT DEFAULT 0,
+FOREIGN KEY (user_email) REFERENCES users(user_email),
+FOREIGN KEY (col1) REFERENCES teams(team_name),
+FOREIGN KEY (col2) REFERENCES teams(team_name),
+FOREIGN KEY (col3) REFERENCES teams(team_name),
+FOREIGN KEY (col4) REFERENCES teams(team_name),
+FOREIGN KEY (col5) REFERENCES teams(team_name),
+FOREIGN KEY (col6) REFERENCES teams(team_name),
+FOREIGN KEY (col7) REFERENCES teams(team_name),
+FOREIGN KEY (col8) REFERENCES teams(team_name),
+CONSTRAINT col_values_different_constraint CHECK (col1 != col2 AND col1 != col3 AND col1 != col4 AND col2 != col3 AND col2 != col4 AND col3 != col4),
+CONSTRAINT col_values_different_constraint_second CHECK (col5 != col6 AND col5 != col7 AND col5 != col8 AND col6 != col7 AND col6 != col8 AND col7 != col8)
 );
