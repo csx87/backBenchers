@@ -61,7 +61,10 @@ def fetch_sql_result_and_convert_to_json(cursor):
                     if(isinstance(row[i], decimal.Decimal)):
                         result_dict[column[0]] = int(row[i])
                     else:
-                        result_dict[column[0]] = row[i]
+                        if(isinstance(row[i], str)):
+                            result_dict[column[0]] = row[i].upper()
+                        else: 
+                            result_dict[column[0]] = row[i]
             results_json.append(result_dict)
         print("Here" + json.dumps(results_json))
         return json.dumps(results_json)

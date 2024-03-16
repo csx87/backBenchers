@@ -13,28 +13,30 @@ FRONTEND_API_KEY = utils.FRONTEND_API_KEY
 
 
 def validateHeaders(API_KEY, check_json_content = False):
-    if 'api-key' not in request.headers:
-            abort(401, 'Missing API key')
-    
-        # Verify the API key
-    if request.headers['api-key'] != API_KEY:
-        	abort(401, 'Invalid API key')
-              
-    if(check_json_content):
-        if 'Content-type' not in request.headers:
-        	abort(401, 'Missing Content-type')
-    
-        # Verify the API key
-        if request.headers['Content-type'] != "application/json":
-        	abort(401, 'Content-type should be application/json')
+        if 'api-key' not in request.headers:
+                abort(401, 'Missing API key')
+        
+            # Verify the API key
+        if request.headers['api-key'] != API_KEY:
+                abort(401, 'Invalid API key')
+                
+        if(check_json_content):
+            if 'Content-type' not in request.headers:
+                abort(401, 'Missing Content-type')
+        
+            # Verify the API key
+            if 'application/json' not in request.headers['Content-Type']:
+                print(request.headers['Content-Type'])
+                abort(401, 'Content-type should be application/json')
+
 
 @app.route('/pingServer')
 def ping():
-    validateHeaders(FRONTEND_API_KEY)
     try:
+        validateHeaders(FRONTEND_API_KEY)
         ret = utils.execute_sql_command("SELECT 1")
         if(ret["result"] == 1):
-                return jsonify({"result": 1, "msg": "server is on and database is available"})
+                return jsonify({"result": 1, "msg": "server is on and\ database is available"})
         else:
             return jsonify(ret)
     except Exception as e:
@@ -209,6 +211,7 @@ def setupTables():
 def addUser():
     try:
         #------------------ Validating Headers and payload -------------------------------------------#
+        email = None
         validateHeaders(FRONTEND_API_KEY, check_json_content= True)
         data = request.json
         ret = None
@@ -247,6 +250,7 @@ def addUser():
         if(ret['result'] == 1):
             ret = user.addUserToTop4Table(email,name)
             if(ret ["result"] == -1):
+                if(email != None):
                     ret = user.delUser(email)
                     return jsonify({"result":-1,"msg":"Couldn't Add user to leadrboard deleting the user please try to add him again"})
 
@@ -259,7 +263,13 @@ def addUser():
         return jsonify(user.getUserInfo(email))
         
     except Exception as e:
-        ret = user.delUser(email)
+        error_msg = e
+        try:
+            if(email != None):
+                ret = user.delUser(email)
+        except Exception as e:
+            error_msg = f"An unexpected error occurred: {str(e)}"
+            return jsonify({"result": 0, "msg": error_msg}), 500
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
     
