@@ -5,6 +5,7 @@ import pandas as pd
 
 
 
+
 def getTable(table_name):
     try: 
         query = "SELECT * from " + table_name.lower() 
@@ -32,8 +33,10 @@ def getLeaderboard():
         table = table + f"INNER JOIN {utils.MATCHES_TABLE_NAME}\n"
         table = table + f"ON {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} = {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}\n"
 
-        cond = "WHERE start_time < DATE_ADD(DATE_ADD(NOW(), INTERVAL 5 HOUR), INTERVAL 30 MINUTE)\n"
-        cond = cond + "GROUP BY user_name ) as leaderboard_without_top4"
+        
+        cond_time_limit = "WHERE start_time < DATE_ADD(DATE_ADD(NOW(), INTERVAL 5 HOUR), INTERVAL 30 MINUTE)\n"
+        cond = cond_time_limit + "GROUP BY user_name ) as leaderboard_without_top4"
+
 
         leaderboard_without_top4_table  = f"(SELECT user_name, {matches_won} as matches_won, {matches_lost} as matches_lost, {matches_not_predicted} as matches_not_predicted, {points} as pred_points\n"
         leaderboard_without_top4_table  = leaderboard_without_top4_table + table + cond
@@ -46,7 +49,12 @@ def getLeaderboard():
         query = leaderboard_col + leaderboard_join + leaderboard_order
 
 
-        return utils.execute_sql_command(query,fetchResults=True)
+        ret = utils.execute_sql_command(query,fetchResults=True)
+        if(len(json.loads(ret['msg'])) == 0):
+                 query = query.replace(cond_time_limit,"")
+                 return utils.execute_sql_command(query,fetchResults=True)
+        return ret
+
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}

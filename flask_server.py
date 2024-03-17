@@ -397,7 +397,9 @@ def updateTeamWon() :
 
         match_id = data["match_id"]
         team_won = data["team_won"]
-        if( match_id<1 or len(team_won) < 1):
+        if(team_won == None):
+            query = f"UPDATE {utils.MATCHES_TABLE_NAME} SET team_won is NULL WHERE match_id = {match_id}"
+        elif( match_id<1 or len(team_won) < 1):
             return jsonify({"result": 0, "msg": "Value for either of the field is missing or imporper"}), 400
 
         query = f"UPDATE {utils.MATCHES_TABLE_NAME} SET team_won = %s WHERE match_id = {match_id}"
