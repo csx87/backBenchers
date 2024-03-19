@@ -13,6 +13,7 @@ import decimal
 # msg <json_string> -> load -> list_of_elements -> each element is of dict type
 #json.loads(ret['msg'])[0]["password"]
 
+#----------- These are only fields which are configurable, avoid changing other fileds without knowledge-------------------#
 config = {
     'user': 'root',
     'password': 'GILLisGOAT@77',
@@ -23,14 +24,7 @@ config = {
 BACKEND_API_KEY = '123456789'
 FRONTEND_API_KEY = "GILLisGOAT@77"
 
-USERS_TABLE_NAME = "users"
-PREDICTION_TABLE_NAME = "predictions"
-LEADERBOARD_TABLE_NAME = "leaderboard"
-MATCHES_TABLE_NAME = "matches"
-TEAMS_TABLE_NAME = "teams"
-TOP4_TABLE_NAME = "top4"
 
-MATCHES_ID_COL_NAME = "match_id"
 MATCHES_WON_POINT = 2
 MATCHES_LOST_POINT = 0
 MATCHES_NOT_PREDICTED_POINT = -1
@@ -39,6 +33,18 @@ TEAMS_PRESENT_IN_FIRST_TOP4_PRED = 2
 TEAMS_CORRECT_POSITON_PRED_FIRST_TOP4 = 2
 TEAMS_PRESENT_IN_SECOND_TOP4_PRED = 2
 TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4 = 2
+
+#---------------------------------------------------------------------------------------------------------------------------#
+
+USERS_TABLE_NAME = "users"
+PREDICTION_TABLE_NAME = "predictions"
+LEADERBOARD_TABLE_NAME = "leaderboard"
+MATCHES_TABLE_NAME = "matches"
+TEAMS_TABLE_NAME = "teams"
+TOP4_TABLE_NAME = "top4"
+
+MATCHES_ID_COL_NAME = "match_id"
+
 
 VALID_USERS = ["test_user","chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
 
