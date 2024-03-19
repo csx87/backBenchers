@@ -34,8 +34,7 @@ def getLeaderboard():
         table = table + f"ON {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} = {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}\n"
 
         
-        cond_time_limit = "WHERE start_time < DATE_ADD(DATE_ADD(NOW(), INTERVAL 5 HOUR), INTERVAL 30 MINUTE)\n"
-        cond = cond_time_limit + "GROUP BY user_name ) as leaderboard_without_top4"
+        cond = "GROUP BY user_name ) as leaderboard_without_top4"
 
 
         leaderboard_without_top4_table  = f"(SELECT user_name, {matches_won} as matches_won, {matches_lost} as matches_lost, {matches_not_predicted} as matches_not_predicted, {points} as pred_points\n"
@@ -50,9 +49,6 @@ def getLeaderboard():
 
 
         ret = utils.execute_sql_command(query,fetchResults=True)
-        if(len(json.loads(ret['msg'])) == 0):
-                 query = query.replace(cond_time_limit,"")
-                 return utils.execute_sql_command(query,fetchResults=True)
         return ret
 
     except Exception as e:
