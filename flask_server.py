@@ -195,7 +195,7 @@ def updateUserPredictions():
         return jsonify({"result": 0, "msg": error_msg})
 '''
 
-@app.route('/setupTables',methods=['GET'])
+@app.route('/setupTables',methods=['POST'])
 def setupTables():
     try:
        validateHeaders(BACKEND_API_KEY)
