@@ -89,12 +89,9 @@ def delUser(user_email):
 
 def updateUserPredictions(user_email,predictionsList):
     try:
-        print(predictionsList)
         for prediction in predictionsList:
-            print(type(prediction["user_prediction"]))
 
             query = f"UPDATE predictions SET user_prediction = %s WHERE user_email=%s AND match_id=%s"
-            print(query)
             ret = utils.execute_sql_command(query,parameter = (prediction["user_prediction"],user_email,prediction["match_id"],),haveToCommit= True)
         return ret
     except Exception as e:

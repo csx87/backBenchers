@@ -26,7 +26,6 @@ def validateHeaders(API_KEY, check_json_content = False):
         
             # Verify the API key
             if 'application/json' not in request.headers['Content-Type']:
-                print(request.headers['Content-Type'])
                 abort(401, 'Content-type should be application/json')
 
 
@@ -399,7 +398,6 @@ def updateTeamWon() :
         validateHeaders(BACKEND_API_KEY,check_json_content = True)
         data = request.json
 
-        print(type(data),data)
 
         if("match_id" not in data.keys() or "team_won" not in data.keys()):
             return jsonify({"result": 0, "msg": "Either match_id or team_won fields not present"}), 400
@@ -483,7 +481,6 @@ def updateTop4():
         validateHeaders(BACKEND_API_KEY,check_json_content = True)
         data = request.json
 
-        print(type(data),data)
 
         if("team1" not in data.keys() or "team2" not in data.keys() or"team3" not in data.keys() or"team4" not in data.keys()):
             return jsonify({"result": 0, "msg": "Either team1,team2,team3,team4 fields not present"}), 400

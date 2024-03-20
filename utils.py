@@ -77,7 +77,6 @@ def fetch_sql_result_and_convert_to_json(cursor, upperCase= False):
                         else: 
                             result_dict[column[0]] = row[i]
             results_json.append(result_dict)
-        print("Here" + json.dumps(results_json))
         return json.dumps(results_json)
 
     except Exception as e:
@@ -91,7 +90,6 @@ def execute_sql_command(command: str,fetchResults=False,parameter = None,haveToC
     msg = ""
     cursor = None
     try:
-        print(command)
         # Establish a connection to the database
         with mysql.connector.connect(**config) as conn:
             if(conn != None):
@@ -140,7 +138,6 @@ def checkPassword(user_email,password):
             return ret
         else:
             #Format of msg affects
-            #print(ret['msg'],type(ret['msg']),type(json.loads(ret['msg'])[0]))
             if(len(json.loads(ret['msg'])) == 0):
                  return {"result": -1, "msg": "User_Not_Found"}
 
