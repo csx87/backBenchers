@@ -173,6 +173,15 @@ def getUserPredictions():
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg})
 
+@app.route('/getTop4LockoutTime',methods=['GET'])
+def getTop4LockoutTime():
+    try:
+        validateHeaders(FRONTEND_API_KEY)
+        return jsonify({"first_lock_out":f"{utils.FIRST_TOP4_LOCKOUT_PERIOD}","second_lock_out":f"{utils.SECOND_TOP4_LOCKOUT_PERIOD}"})
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return jsonify({"result": 0, "msg": error_msg})
+
 '''  
 @app.route('/updateUserPredictions',methods=['GET'])
 def updateUserPredictions():

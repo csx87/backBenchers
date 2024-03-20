@@ -29,10 +29,15 @@ MATCHES_WON_POINT = 2
 MATCHES_LOST_POINT = 0
 MATCHES_NOT_PREDICTED_POINT = -1
 
-TEAMS_PRESENT_IN_FIRST_TOP4_PRED = 2
-TEAMS_CORRECT_POSITON_PRED_FIRST_TOP4 = 2
+TEAMS_PRESENT_IN_FIRST_TOP4_PRED = 3
+TEAMS_CORRECT_POSITON_PRED_FIRST_TOP4 = 3
 TEAMS_PRESENT_IN_SECOND_TOP4_PRED = 2
 TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4 = 2
+
+VALID_USERS = ["chaman.suresh@dish.com","srijan.sivakumar@dish.com","chethan.r@dish.com","mamidichennakeshav.m@dish.com","omkaranand.parab@dish.com","shubhammanoj.kanse@dish.com","suraj.satish@dish.com","yogish.pd@dish.com"]
+
+FIRST_TOP4_LOCKOUT_PERIOD = "2024-03-26 00:00:00"
+SECOND_TOP4_LOCKOUT_PERIOD = "2024-04-08 00:00:00"
 
 #---------------------------------------------------------------------------------------------------------------------------#
 
@@ -46,7 +51,7 @@ TOP4_TABLE_NAME = "top4"
 MATCHES_ID_COL_NAME = "match_id"
 
 
-VALID_USERS = ["test_user","chaman.sureshbabu@gmail.com","yogish.pd@gmail.com","surajs.ytb@gmail.com","surajs.ytb1@gmail.com","surajs.ytb2@gmail.com","surajs.ytb3@gmail.com","surajs.ytb4@gmail.com","surajs.ytb5@gmail.com"]
+
 
 
 PASSWORD_COL_NAME = "password"

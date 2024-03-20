@@ -140,7 +140,7 @@ def updateUserTop4Poins(user_email, real_top4: list):
             if(team in first_top4_list):
                 points = points + utils.TEAMS_PRESENT_IN_FIRST_TOP4_PRED
                 if(real_top4.index(team) == first_top4_list.index(team)):
-                    points = points + utils.TEAMS_CORRECT_POSITON_PRED_SECOND_TOP4
+                    points = points + utils.TEAMS_CORRECT_POSITON_PRED_FIRST_TOP4
 
             if(team in second_top4_list):
                 points = points + utils.TEAMS_PRESENT_IN_SECOND_TOP4_PRED

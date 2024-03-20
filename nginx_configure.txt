@@ -127,6 +127,12 @@ server {
     location /updateUserSecondTop4Pred {
         proxy_pass http://flaskhelloworld/updateUserSecondTop4Pred ;
     }
+
+    location /getTop4LockoutTime {
+        proxy_pass http://flaskhelloworld/getTop4LockoutTime ;
+    }
+
+    
 	# pass PHP scripts to FastCGI server
 	#
 	#location ~ \.php$ {
