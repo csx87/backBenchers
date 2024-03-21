@@ -57,7 +57,7 @@ def getTeams():
 def getMatches():
     validateHeaders(FRONTEND_API_KEY)
     try:
-        ret = tb.getMatches(withoutTBD = True)
+        ret = tb.getMatches()
         return jsonify(ret)
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"

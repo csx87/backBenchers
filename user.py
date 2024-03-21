@@ -22,7 +22,7 @@ def getFullUserPredictions(user_email):
         query = f"SELECT {utils.MATCHES_TABLE_NAME}.*  ,{utils.PREDICTION_TABLE_NAME}.user_prediction  FROM {utils.PREDICTION_TABLE_NAME}"
         query = query + f"\nINNER JOIN {utils.MATCHES_TABLE_NAME}" 
         query = query + f"\nON {utils.MATCHES_TABLE_NAME}.match_id = {utils.PREDICTION_TABLE_NAME}.match_id" 
-        query = query + "\nWHERE user_email =%s " 
+        query = query + f"\nWHERE user_email =%s AND ({utils.MATCHES_TABLE_NAME}.team_1 != 'tbd' AND {utils.MATCHES_TABLE_NAME}.team_2 != 'tbd')" 
         ret = utils.execute_sql_command(query,fetchResults=True,parameter=(user_email,),upperCase = True)
         return ret
     except Exception as e:
