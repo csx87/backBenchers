@@ -164,3 +164,18 @@ def updateUserTop4Pred(user_email,top4_prediciton_list,firstPred):
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return {"result": 0, "msg": error_msg}
+
+
+def addNewMatches(user_email,matches_id_list):
+    try:
+        for match_id in matches_id_list:
+            ret = getUserInfo(user_email)
+            if(ret["result"] == 1):
+                user_name = json.loads(ret["msg"])[0]["user_name"]
+                query = f"INSERT INTO {utils.PREDICTION_TABLE_NAME} (match_id,user_email,user_name) VALUES ({match_id},%s,%s);"
+                ret = utils.execute_sql_command(query,parameter=(user_email,user_name,),haveToCommit=True)
+        return ret
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+

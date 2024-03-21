@@ -167,14 +167,26 @@ def is_table_empty(table_name):
         error_msg = f"An unexpected error occurred: {str(e)}"
         return -1
 
+def excel_to_list(excel_file):
+    try:
+        # Read Excel file into DataFrame
+        df = pd.read_excel(excel_file)
 
-def excel_to_mysql(table_name,excel_file):
+        # Convert DataFrame to list of dictionaries
+        list_of_dicts = df.to_dict(orient='records')
+
+        return list_of_dicts
+    except Exception as e:
+        error_msg = f"An unexpected error occurred: {str(e)}"
+        return {"result": 0, "msg": error_msg}
+
+def excel_to_mysql(table_name,excel_file,checkTableEmpty = True):
     try:
         table_name = table_name.lower()
         df = pd.read_excel(excel_file)
 
 
-        if(is_table_empty(table_name)):
+        if((not checkTableEmpty) or is_table_empty(table_name)):
             insert_query = f"INSERT INTO {table_name} ("
             for column in df.columns:
                 insert_query += f"{column},"

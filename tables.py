@@ -18,7 +18,16 @@ def getTable(table_name):
 def getTeams():
     return getTable(utils.TEAMS_TABLE_NAME)
 
-def getMatches():
+def getMatches(withoutTBD = False):
+    if(withoutTBD):
+        try: 
+            query = f"SELECT * from {utils.MATCHES_TABLE_NAME} WHERE team_1 != 'TBD' AND team_2 != 'TBD' "
+            ret = utils.execute_sql_command(query,fetchResults=True);
+            return ret
+        except Exception as e:
+            error_msg = f"An unexpected error occurred: {str(e)}"
+            return {"result": 0, "msg": error_msg}
+
     return getTable(utils.MATCHES_TABLE_NAME)
     
 def getLeaderboard():
@@ -114,3 +123,11 @@ def getUsersList():
         for users_dict in json.loads(ret["msg"]):
             user_list.append(users_dict["user_email"])
     return user_list
+
+
+def addNewMatches(matches_list):
+    try:    
+      pass  
+    except (KeyError, json.JSONDecodeError):
+        # Handle missing or invalid JSON data
+        return False  

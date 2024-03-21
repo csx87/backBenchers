@@ -3,6 +3,7 @@ import utils
 import tables as tb
 import user
 import os
+import json
 
 app = Flask(__name__)
 
@@ -56,7 +57,7 @@ def getTeams():
 def getMatches():
     validateHeaders(FRONTEND_API_KEY)
     try:
-        ret = tb.getMatches()
+        ret = tb.getMatches(withoutTBD = True)
         return jsonify(ret)
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
@@ -323,8 +324,9 @@ def populateMatchesTable():
             excel_file_path = f'{table_name}_{excel_file.filename}'
             excel_file.save(excel_file_path)
             ret = utils.excel_to_mysql(table_name,excel_file_path)
-            return jsonify(ret)
             os.remove(excel_file_path)
+            return jsonify(ret)
+            
 
         else:
             return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500
@@ -357,8 +359,10 @@ def updateUserPredictions():
         if(not cont):
             error_msg = """An unexpected error occurred: The json body is not of the proper format [{"match_id":"1","user_prediction":"RCB"},{"match_id":"2","user_prediction":"MI"},.....]"""
             return jsonify({"result": 0, "msg": error_msg}), 500
+        
+        print("Updating user predictions:",request.headers["user-email"],data,flush=True)
 
-        ret = user.updateUserPredictions(request.headers["user-email"],data)
+        ret = user.updateUserPredictions(request.headers["user-email"],data,)
 
         if(ret["result"] == 1):
             ret = user.getFullUserPredictions(request.headers["user-email"])
@@ -416,6 +420,8 @@ def updateUserFirstTop4Pred():
 
         top4_predicted = list(data.values())
 
+        print("First top4 predictions:",request.headers["user-email"],top4_predicted,flush=True)
+
         ret = user.updateUserTop4Pred(request.headers["user-email"],top4_predicted,firstPred=True)
 
         return jsonify(ret)
@@ -444,6 +450,8 @@ def updateUserSecondTop4Pred():
                 return jsonify({"result": 0, "msg": "Either team1,team2,team3,team4 fields not present"}), 400
 
         top4_predicted = list(data.values())
+
+        print("Second top4 predictions:",request.headers["user-email"],top4_predicted,flush=True)
 
         ret = user.updateUserTop4Pred(request.headers["user-email"],top4_predicted,firstPred=False)
 
@@ -477,6 +485,62 @@ def updateTop4():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
+
+@app.route('/addNewMatches',methods=['POST'])
+def addNewMatches():
+    try:
+        table_name = utils.MATCHES_TABLE_NAME
+        excel_file_path = ""
+
+        validateHeaders(BACKEND_API_KEY)
+
+        if 'excel-file' not in request.files:
+            return jsonify({"result": 1, "msg": "No excel or ods file found"}), 500
+        
+
+        excel_file = request.files["excel-file"]
+
+
+        if(excel_file.filename == ""):
+            return jsonify({"result": 1, "msg": "The excel/ods file provided is not proper"}), 500
+        
+        if excel_file:
+            excel_file_path = f'{table_name}_{excel_file.filename}'
+            excel_file.save(excel_file_path)
+            ret = utils.excel_to_mysql(table_name,excel_file_path,checkTableEmpty =False)
+            os.remove(excel_file_path)
+            
+            if(ret["result"] == 1):
+
+                query = f"SELECT {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} FROM {utils.PREDICTION_TABLE_NAME} RIGHT JOIN matches ON {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}  = {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} WHERE {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} is NULL"
+                ret = utils.execute_sql_command(query,fetchResults=True)
+
+                if(ret["result"] == 1):
+                    new_matches_list = json.loads(ret['msg'])
+                    match_id_list = []
+                    for match in new_matches_list:
+                        match_id_list.append(match["match_id"])
+
+                    user_list = tb.getUsersList()
+                    
+                    for user_email in user_list:
+                        ret = user.addNewMatches(user_email,match_id_list)
+
+                    if(ret["result"] != 1):
+                        return ret
+
+                return tb.getMatches()
+            else:
+                return jsonify(ret)
+
+        else:
+            return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500 
+
+            
+
+    except Exception as e:
+            error_msg = f"An unexpected error occurred: {str(e)}"
+            return jsonify({"result": 0, "msg": error_msg}), 500
 
 @app.route('/delUser',methods=['POST'])
 def delUser():

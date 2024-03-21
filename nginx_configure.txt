@@ -132,6 +132,10 @@ server {
         proxy_pass http://flaskhelloworld/getTop4LockoutTime ;
     }
 
+    location /addNewMatches {
+        proxy_pass http://flaskhelloworld/addNewMatches;
+    }
+
     
 	# pass PHP scripts to FastCGI server
 	#
