@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, render_template
 import utils
 import tables as tb
 import user
@@ -545,7 +545,7 @@ def addNewMatches():
 @app.route('/delUser',methods=['POST'])
 def delUser():
     try:
-        validateHeaders(FRONTEND_API_KEY)
+        validateHeaders(BACKEND_API_KEY)
 
         user_email = request.headers["user-email"]
 
@@ -555,7 +555,6 @@ def delUser():
     except Exception as e:
         error_msg = f"An unexpected error occurred: {str(e)}"
         return jsonify({"result": 0, "msg": error_msg}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True,port = 8001)
