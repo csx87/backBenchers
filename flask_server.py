@@ -4,6 +4,7 @@ import tables as tb
 import user
 import os
 import json
+import subprocess
 
 app = Flask(__name__)
 
@@ -507,32 +508,10 @@ def addNewMatches():
         if excel_file:
             excel_file_path = f'{table_name}_{excel_file.filename}'
             excel_file.save(excel_file_path)
-            ret = utils.excel_to_mysql(table_name,excel_file_path,checkTableEmpty =False)
-            os.remove(excel_file_path)
-            
-            if(ret["result"] == 1):
-
-                query = f"SELECT {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} FROM {utils.PREDICTION_TABLE_NAME} RIGHT JOIN matches ON {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}  = {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} WHERE {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} is NULL"
-                ret = utils.execute_sql_command(query,fetchResults=True)
-
-                if(ret["result"] == 1):
-                    new_matches_list = json.loads(ret['msg'])
-                    match_id_list = []
-                    for match in new_matches_list:
-                        match_id_list.append(match["match_id"])
-
-                    user_list = tb.getUsersList()
-                    
-                    for user_email in user_list:
-                        ret = user.addNewMatches(user_email,match_id_list)
-
-                    if(ret["result"] != 1):
-                        return ret
-
-                return tb.getMatches()
-            else:
-                return jsonify(ret)
-
+            process = subprocess.Popen(['sudo', '/home/ubuntu/backBenchers/venv/bin/python3', 'add_new_matches.py', excel_file_path])
+            pid = process.pid
+            print("Chaman", pid,flush=True)
+            return jsonify({"result":1,"msg":""})
         else:
             return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500 
 
