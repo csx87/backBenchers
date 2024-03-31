@@ -511,7 +511,7 @@ def addNewMatches():
             process = subprocess.Popen(['sudo', '/home/ubuntu/backBenchers/venv/bin/python3', 'add_new_matches.py', excel_file_path])
             pid = process.pid
             print("Chaman", pid,flush=True)
-            return jsonify({"result":1,"msg":""})
+            return jsonify({"result":1,"msg":"new process add_new_matches.py will be running, wait for it to complete and see the logs in output.txt. Ideally it will take no_of_users*5 sec"})
         else:
             return jsonify({"result": 0, "msg": "Cannot open excel file"}), 500 
 
