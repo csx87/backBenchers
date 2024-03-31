@@ -43,7 +43,7 @@ def getLeaderboard():
         table = table + f"ON {utils.MATCHES_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME} = {utils.PREDICTION_TABLE_NAME}.{utils.MATCHES_ID_COL_NAME}\n"
 
         
-        cond = "GROUP BY user_name ) as leaderboard_without_top4"
+        cond = "WHERE predictions.user_email != 'test_user@gmail.com' GROUP BY user_name ) as leaderboard_without_top4"
 
 
         leaderboard_without_top4_table  = f"(SELECT user_name, {matches_won} as matches_won, {matches_lost} as matches_lost, {matches_not_predicted} as matches_not_predicted, {points} as pred_points\n"
