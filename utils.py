@@ -16,13 +16,13 @@ import decimal
 #----------- These are only fields which are configurable, avoid changing other fileds without knowledge-------------------#
 config = {
     'user': 'root',
-    'password': 'GILLisGOAT@77',
+    'password': os.environ("DB Password"),
     'host': 'localhost',
     'database': 'ipl_practice_beta'
 }
 
-BACKEND_API_KEY = '123456789'
-FRONTEND_API_KEY = "GILLisGOAT@77"
+BACKEND_API_KEY = os.environ("BACKEND_API_KEY")
+FRONTEND_API_KEY =  os.environ("FRONTEND_API_KEY")
 
 
 MATCHES_WON_POINT = 2
